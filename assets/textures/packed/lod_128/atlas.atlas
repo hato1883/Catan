@@ -1,0 +1,48 @@
+
+atlas.png
+size: 1024, 256
+format: RGBA8888
+filter: MipMapLinearLinear, Linear
+repeat: none
+brick
+  rotate: false
+  xy: 2, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 128
+desert
+  rotate: false
+  xy: 134, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 128
+grain
+  rotate: false
+  xy: 266, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 128
+lumber
+  rotate: false
+  xy: 398, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 128
+ore
+  rotate: false
+  xy: 530, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 128
+wool
+  rotate: false
+  xy: 662, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 128
