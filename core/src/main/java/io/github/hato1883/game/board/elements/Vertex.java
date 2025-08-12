@@ -1,21 +1,15 @@
 package io.github.hato1883.game.board.elements;
 
 import com.badlogic.gdx.math.Vector2;
-import io.github.hato1883.game.board.Board;
-import io.github.hato1883.game.board.CubeCoord;
+import io.github.hato1883.api.game.board.ICubeCoord;
 import io.github.hato1883.game.board.HexTile;
-import io.github.hato1883.game.board.elements.vertex.Building;
-import io.github.hato1883.game.board.elements.vertex.City;
-import io.github.hato1883.game.board.elements.vertex.Town;
-import io.github.hato1883.game.board.elements.vertex.VertexCoord;
-import io.github.hato1883.game.player.Player;
-import io.github.hato1883.ui.gui.GameBoard;
+import io.github.hato1883.api.game.board.VertexCoord;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static io.github.hato1883.game.board.CubeCoord.cubeToWorld;
+import static io.github.hato1883.api.game.board.CubeCordUtils.cubeToWorld;
 
 /**
  * Represents a vertex (intersection point) on the Catan game board where buildings can be placed.
@@ -27,8 +21,7 @@ import static io.github.hato1883.game.board.CubeCoord.cubeToWorld;
  * </ul>
  *
  * <h3>Building Rules:</h3>
- * Vertices can contain either a {@link Town} or {@link City}.
- * Buildings must follow distance rules (no adjacent buildings).
+ * Vertices can contain a {@link Building}
  *
  * <h3>Example Usage:</h3>
  * <pre>{@code
@@ -42,10 +35,11 @@ import static io.github.hato1883.game.board.CubeCoord.cubeToWorld;
  * <h3>See Also:</h3>
  * <ul>
  *     <li>{@link Edge} - Connections between vertices</li>
- *     <li>{@link Board} - Manages all vertices in the game</li>
+ *     <li>{@link io.github.hato1883.api.game.board.IBoard} - Manages all vertices in the game</li>
  * </ul>
  */
 public class Vertex {
+
     /** The coordinate identifier for this vertex */
     private final VertexCoord coord;
 
@@ -147,65 +141,8 @@ public class Vertex {
         return Collections.unmodifiableList(adjacentEdges);
     }
 
-    /**
-     * Checks if a building type can be constructed on this vertex.
-     *
-     * @param type the building type to check (Town or City)
-     * @return true if construction is allowed by game rules
-     *
-     * <h3>Building Rules:</h3>
-     * <ul>
-     *     <li>Towns:
-     *         <ul>
-     *             <li>No existing buildings on this vertex</li>
-     *             <li>No adjacent buildings (distance rule)</li>
-     *         </ul>
-     *     </li>
-     *     <li>Cities:
-     *         <ul>
-     *             <li>Must upgrade player's existing town</li>
-     *         </ul>
-     *     </li>
-     * </ul>
-     *
-     * <h3>FIXME:</h3>
-     * - Distance rule check is incomplete (only checks direct neighbors)
-     * - Doesn't verify player has required resources
-     */
-    public boolean canBuild(Building type) {
-        if (type instanceof Town) {
-            boolean hasBuilding = hasBuilding();
-            for (Edge edge : adjacentEdges) {
-                hasBuilding = hasBuilding || edge.getOther(this).hasBuilding();
-            }
-            System.out.printf("Can we build? %b", !hasBuilding);
-            return !hasBuilding;
-        } else if (type instanceof City) {
-            return building instanceof Town && building.getPlayer().equals(type.getPlayer());
-        }
-        return false;
-    }
-
-    /**
-     * Attempts to construct a building on this vertex.
-     *
-     * @param type the building to construct
-     * @return true if construction succeeded, false otherwise
-     *
-     * <h3>TODO:</h3>
-     * - Add resource deduction when inventory system exists
-     * - Trigger victory point recalculation
-     */
-    public boolean build(Building type) {
-        if (this.canBuild(type)) {
-            building = type;
-            return true;
-        }
-        return false;
-    }
-
     public static Vector2 computeVertexPosition(Vertex vertex, float radius, float tileGap) {
-        List<CubeCoord> cords = vertex.getVertexCoord().getAdjacentTiles();
+        List<ICubeCoord> cords = vertex.getVertexCoord().getAdjacentTiles();
 
         if (cords.size() == 3) {
             return average(

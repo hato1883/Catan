@@ -2,17 +2,17 @@ package io.github.hato1883.ui.gui;
 
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
-import io.github.hato1883.game.board.BuildingManager;
 import io.github.hato1883.game.board.elements.Edge;
 import io.github.hato1883.game.board.elements.Structure;
 import io.github.hato1883.game.board.elements.Vertex;
-import io.github.hato1883.game.board.elements.edge.SimpleRoad;
-import io.github.hato1883.game.board.elements.vertex.City;
-import io.github.hato1883.game.board.elements.vertex.Town;
 import io.github.hato1883.game.player.Player;
+import io.github.hato1883.api.LogManager;
+import org.slf4j.Logger;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import static io.github.hato1883.Main.LOGGER_ID;
 
 /**
  * Handles player input for building placement and upgrades.
@@ -20,6 +20,8 @@ import java.util.function.Function;
  * Works with BuildingManager to enforce game rules while providing visual feedback.
  */
 public class InteractionHandler extends InputAdapter {
+
+    private static final Logger LOGGER = LogManager.getLogger(LOGGER_ID);
     private static final float VERTEX_THRESHOLD = 25f; // pixels
     private static final float EDGE_THRESHOLD = 20f;   // pixels
     private final BuildingManager buildingManager;
@@ -73,30 +75,30 @@ public class InteractionHandler extends InputAdapter {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.printf("Clicked at (%d, %d) \n", screenX, screenY);
+        LOGGER.debug("Clicked at ({}, {})", screenX , screenY);
         if (currentPlayer == null || currentBuildingType == null) return false;
 
         Vector2 worldPos = screenToWorldConverter.apply(screenX, screenY);
 //        Vector2 worldPos = new Vector2(screenX, screenY);
-        System.out.printf("World position at (%f.2, %f.2) \n", worldPos.x, worldPos.y);
+        LOGGER.debug("World position at ({}, {})", worldPos.x, worldPos.y);
         Vertex clickedVertex = findClosestVertex(worldPos);
         Edge clickedEdge = findClosestEdge(worldPos);
 
-        System.out.println("Closet Vertex: " + clickedVertex);
-        System.out.println("Closet Edge: " + clickedEdge);
+        LOGGER.debug("Closet Vertex: " + clickedVertex);
+        LOGGER.debug("Closet Edge: " + clickedEdge);
 
         if (currentBuildingType == Town.class && clickedVertex != null) {
-            System.out.println("Trying to build a Town");
+            LOGGER.debug("Trying to build a Town");
             // Success - proceed to next turn
             return buildingManager.placeSettlement(clickedVertex, currentPlayer);
         }
         else if (currentBuildingType == City.class && clickedVertex != null) {
-            System.out.println("Trying to build a City");
+            LOGGER.debug("Trying to build a City");
             // Success
             return buildingManager.upgradeToCity(clickedVertex, currentPlayer);
         }
         else if (currentBuildingType == SimpleRoad.class && clickedEdge != null) {
-            System.out.println("Trying to build a Road");
+            LOGGER.debug("Trying to build a Road");
             // Success
             return buildingManager.placeRoad(clickedEdge, currentPlayer);
         }

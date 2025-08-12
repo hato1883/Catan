@@ -1,54 +1,92 @@
 package io.github.hato1883.game.board;
 
-import io.github.hato1883.game.board.elements.Vertex;
-import io.github.hato1883.game.resource.ResourceType;
+import io.github.hato1883.api.game.IResourceType;
+import io.github.hato1883.api.game.board.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents a single hex tile on the board.
  * Each tile has a resource type and an optional number token (0 if not assigned).
  */
-public class HexTile {
-    private final CubeCoord coord;  // Make final since coordinate shouldn't change
-    private final ResourceType resourceType;
-    private final int numberToken;
-    private final List<Vertex> vertices;
-    private boolean hasRobber;
+public class HexTile implements IHexTile {
+    private final ITileType tileType;
+    private final ICubeCoord coord;
+    private final Collection<Integer> productionNumbers;
+    private boolean isBlocked;
 
-    public HexTile(CubeCoord coord, ResourceType resourceType, int numberToken) {
+    public HexTile(
+        ITileType tileType,
+        ICubeCoord coord,
+        Collection<Integer> productionNumbers
+    ) {
+        this.tileType = tileType;
         this.coord = coord;
-        this.resourceType = resourceType;
-        this.numberToken = numberToken;
-        this.vertices = new ArrayList<>();
+        this.productionNumbers = Collections.unmodifiableCollection(productionNumbers);
+        this.isBlocked = false;
     }
 
-    public void produceResources() {
-        if (resourceType == null || hasRobber) return; // Desert
-
-        for (Vertex vertex : vertices) {
-            if (vertex.hasBuilding()) {
-                vertex.getBuilding().produce(resourceType);
-            }
-        }
+    @Override
+    public ITileType getTileType() {
+        return tileType;
     }
 
-    public ResourceType getResourceType() {
-        return resourceType;
-    }
-
-    public int getNumberToken() {
-        return numberToken;
-    }
-
-    public CubeCoord getCoord() {
+    @Override
+    public ICubeCoord getCoord() {
         return coord;
     }
 
-    public void setVertices(List<Vertex> tileVertices) {
-        if (!vertices.isEmpty())
-            vertices.clear();
-        vertices.addAll(tileVertices);
+    @Override
+    public Collection<Integer> getProductionNumbers() {
+        return productionNumbers;
+    }
+
+    @Override
+    public Map<IResourceType, Integer> getBaseProduction() {
+        return tileType.getBaseProduction();
+    }
+
+    @Override
+    public Collection<IStructure> getConnectedStructures() {
+        return List.of();
+    }
+
+
+    /**
+     * Triggers production of the tile,
+     * Called on every dice roll,
+     * but uses roll as parameter to allow Structures to adhere or ignore dice result
+     *
+     * @param rolledNumber number rolled by the dice
+     */
+    @Override
+    public void triggerProduction(int rolledNumber) {
+        // Always produce an offer, even if the rolled number doesn't match
+        ProductionOffer offer = new ProductionOffer(
+            this,
+            getTileType(),
+            rolledNumber,
+            getBaseProduction(),
+            isBlocked
+        );
+        for (IStructure structure : getConnectedStructures()) {
+            structure.receiveProductionOffer(offer);
+        }
+    }
+
+    /**
+     * Whether the tile is currently blocked (e.g., by the robber)
+     */
+    @Override
+    public boolean isBlocked() {
+        return isBlocked;
+    }
+
+    public void block() {
+        isBlocked = true;
+    }
+
+    public void unblock() {
+        isBlocked = true;
     }
 }

@@ -1,0 +1,20 @@
+plugins {
+  id 'java-library'
+}
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_21
+  targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  // Keep this minimal, probably no external dependencies here
+}
+
+jar {
+  archiveBaseName.set('catan-modding-api')
+}

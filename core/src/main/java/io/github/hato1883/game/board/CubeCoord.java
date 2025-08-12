@@ -1,8 +1,6 @@
 package io.github.hato1883.game.board;
 
-import com.badlogic.gdx.math.Vector2;
-
-import java.util.Objects;
+import io.github.hato1883.api.game.board.ICubeCoord;
 
 /**
  * Represents a cube coordinate in an axial hex grid system following the invariant: q + r + s == 0.
@@ -19,42 +17,33 @@ import java.util.Objects;
  *
  * <h3>Example Usage:</h3>
  * <pre>{@code
- * CubeCoord center = new CubeCoord(0, 0, 0);
- * CubeCoord neighbor = center.getNeighbor(2); // Get NW neighbor
- * int dist = center.distance(new CubeCoord(3, -2, -1));
+ * ICubeCoord center = new ICubeCoord(0, 0, 0);
+ * ICubeCoord neighbor = center.getNeighbor(2); // Get NW neighbor
+ * int dist = center.distance(new ICubeCoord(3, -2, -1));
  * }</pre>
  *
+ * @param x The q-axis component (analogous to x in cartesian coordinates)
+ * @param y The r-axis component (analogous to z in 3D coordinates)
+ * @param z The s-axis component (derived as -q-r to maintain invariant)
  * @see <a href="https://www.redblobgames.com/grids/hexagons/">Red Blob Games: Hex Grids</a>
  */
-public class CubeCoord {
-    /** The q-axis component (analogous to x in cartesian coordinates) */
-    public final int q;
-
-    /** The r-axis component (analogous to z in 3D coordinates) */
-    public final int r;
-
-    /** The s-axis component (derived as -q-r to maintain invariant) */
-    public final int s;
-
+public record CubeCoord(int x, int y, int z) implements ICubeCoord {
     /**
-     * Constructs a cube coordinate ensuring the invariant q + r + s == 0.
+     * Constructs a cube coordinate ensuring the invariant x + y + z == 0.
      *
-     * @param q The q-axis component
-     * @param r The r-axis component
-     * @param s The s-axis component (should equal -q-r)
-     * @throws IllegalArgumentException if q + r + s != 0
+     * @param x The x-axis component → “east-west” direction
+     * @param y The y-axis component → “north-east / south-west”
+     * @param z The z-axis component → “north-west / south-east” (should equal -q-r)
+     * @throws IllegalArgumentException if x + y + z != 0
      *
-     * <h3>Design Note:</h3>
-     * The constructor enforces the cube coordinate invariant to maintain
-     * mathematical consistency across all operations.
+     *                                  <h3>Design Note:</h3>
+     *                                  The constructor enforces the cube coordinate invariant to maintain
+     *                                  mathematical consistency across all operations.
      */
-    public CubeCoord(int q, int r, int s) {
-        if (q + r + s != 0) {
+    public CubeCoord {
+        if (x + y + z != 0) {
             throw new IllegalArgumentException("Invalid cube coords: q + r + s must be 0");
         }
-        this.q = q;
-        this.r = r;
-        this.s = s;
     }
 
     /**
@@ -67,8 +56,8 @@ public class CubeCoord {
      * The distance formula works because in cube coordinates, each step must
      * change two coordinates to maintain the q + r + s = 0 invariant.
      */
-    public int distance() {
-        return (Math.abs(this.q) + Math.abs(this.r) + Math.abs(s)) / 2;
+    public int distanceFromOrigin() {
+        return (Math.abs(this.x()) + Math.abs(this.y()) + Math.abs(z)) / 2;
     }
 
     /**
@@ -79,13 +68,13 @@ public class CubeCoord {
      *
      * <h3>Example:</h3>
      * <pre>{@code
-     * CubeCoord a = new CubeCoord(3, -2, -1);
-     * CubeCoord b = new CubeCoord(1, -1, 0);
+     * ICubeCoord a = new ICubeCoord(3, -2, -1);
+     * ICubeCoord b = new ICubeCoord(1, -1, 0);
      * int dist = a.distance(b); // Returns 2
      * }</pre>
      */
-    public int distance(CubeCoord secondCoord) {
-        return (Math.abs(this.q - secondCoord.q) + Math.abs(this.r - secondCoord.r) + Math.abs(s - secondCoord.s)) / 2;
+    public int distance(ICubeCoord secondCoord) {
+        return (Math.abs(this.x() - secondCoord.x()) + Math.abs(this.y() - secondCoord.y()) + Math.abs(z - secondCoord.z())) / 2;
     }
 
     /**
@@ -105,14 +94,14 @@ public class CubeCoord {
      *     <li>5: Southeast (q+1, r)</li>
      * </ul>
      */
-    public CubeCoord getNeighbor(int direction) {
+    public ICubeCoord getNeighbor(int direction) {
         return switch (direction % 6) {
-            case 0 -> new CubeCoord(q+1, r-1, s);
-            case 1 -> new CubeCoord(q, r-1, s+1);
-            case 2 -> new CubeCoord(q-1, r, s+1);
-            case 3 -> new CubeCoord(q-1, r+1, s);
-            case 4 -> new CubeCoord(q, r+1, s-1);
-            case 5 -> new CubeCoord(q+1, r, s-1);
+            case 0 -> new CubeCoord(x + 1, y - 1, z);
+            case 1 -> new CubeCoord(x, y - 1, z + 1);
+            case 2 -> new CubeCoord(x - 1, y, z + 1);
+            case 3 -> new CubeCoord(x - 1, y + 1, z);
+            case 4 -> new CubeCoord(x, y + 1, z - 1);
+            case 5 -> new CubeCoord(x + 1, y, z - 1);
             default -> throw new IllegalArgumentException("Invalid direction: " + direction);
         };
     }
@@ -123,44 +112,43 @@ public class CubeCoord {
      * @return An array of 6 adjacent coordinates
      *
      * <h3>Performance Note:</h3>
-     * Creates new CubeCoord instances for each neighbor. Consider caching results
+     * Creates new ICubeCoord instances for each neighbor. Consider caching results
      * if this method is called frequently.
      */
-    public CubeCoord[] getAllNeighbors() {
-        CubeCoord[] neighbors = new CubeCoord[6];
+    public ICubeCoord[] getNeighbors() {
+        ICubeCoord[] neighbors = new CubeCoord[6];
         for (int i = 0; i < 6; i++) {
             neighbors[i] = getNeighbor(i);
         }
         return neighbors;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CubeCoord that)) return false;
-        return q == that.q && r == that.r && s == that.s;
+
+    public ICubeCoord add(ICubeCoord other) {
+        return new CubeCoord(
+            this.x() + other.x(),
+            this.y() + other.y(),
+            this.z + other.z()
+        );
+    }
+
+    public ICubeCoord subtract(ICubeCoord other) {
+        return new CubeCoord(
+            this.x() - other.x(),
+            this.y() - other.y(),
+            this.z - other.z()
+        );
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(q, r, s);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CubeCoord(int x1, int y1, int z1))) return false;
+        return x == x1 && y == y1 && z == z1;
     }
 
     @Override
     public String toString() {
-        return String.format("(%d, %d, %d)", q, r, s);
-    }
-
-    public static Vector2 cubeToWorld(CubeCoord coord, float radius, float gap) {
-        float width = (float) (Math.sqrt(3) * radius);
-        float height = 2f * radius;
-
-        float xSpacing = width + gap;
-        float ySpacing = height * 0.75f + gap;
-
-        float x = xSpacing * (coord.q + coord.r / 2f);
-        float y = ySpacing * -coord.r;
-
-        return new Vector2(x, y);
+        return String.format("(%d, %d, %d)", x, y, z);
     }
 }

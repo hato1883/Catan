@@ -1,0 +1,9 @@
+
+{
+  "id": "basemod",
+  "name": "Base Catan Mod",
+  "version": "1.0.0",
+  "description": "Adds the default catan game",
+  "loadPriority": "MEDIUM",
+  "dependencies": []
+}

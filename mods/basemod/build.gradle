@@ -1,0 +1,26 @@
+plugins {
+  id 'java-library'
+}
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_21
+  targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation project(':mod-api')
+}
+
+jar {
+  archiveBaseName.set('catan-base-mod')
+
+  // Include mod descriptor in jar root
+  from('src/main/resources') {
+    include 'catan.mod.json'
+    into '/'
+  }
+}

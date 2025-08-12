@@ -1,6 +1,5 @@
 package io.github.hato1883.ui.gui;
 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -8,8 +7,6 @@ import io.github.hato1883.game.board.elements.BoardElementFactory;
 import io.github.hato1883.game.board.elements.Edge;
 import io.github.hato1883.game.board.elements.Structure;
 import io.github.hato1883.game.board.elements.Vertex;
-import io.github.hato1883.game.board.elements.vertex.City;
-import io.github.hato1883.game.board.elements.vertex.Town;
 import io.github.hato1883.game.player.Player;
 
 import java.util.function.Function;
@@ -56,11 +53,8 @@ public class BuildingRenderer {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(player.getColor());
 
-        if (structure == Town.class) {
-            shapeRenderer.circle(screenX, screenY, TOWN_RADIUS);
-        } else if (structure == City.class) {
-            shapeRenderer.rect(screenX - CITY_SIZE/2, screenY - CITY_SIZE/2, CITY_SIZE, CITY_SIZE);
-        }
+        // Render building preview
+        // TODO: Find building model from mods
 
         shapeRenderer.end();
     }
@@ -78,7 +72,7 @@ public class BuildingRenderer {
         shapeRenderer.setColor(player.getColor());
 
         Vector2 direction = new Vector2(end).sub(start);
-        Vector2 perpendicular = new Vector2(-direction.y, direction.x).nor().scl(ROAD_WIDTH/2);
+        Vector2 perpendicular = direction.rotate90(0).nor().scl(ROAD_WIDTH/2);
 
         shapeRenderer.rectLine(start, end, ROAD_WIDTH);
 
@@ -97,24 +91,13 @@ public class BuildingRenderer {
             if (edge.hasRoad()) {
                 Vector2 v1Pos = positionProvider.apply(edge.getVertex1());
                 Vector2 v2Pos = positionProvider.apply(edge.getVertex2());
-                shapeRenderer.setColor(edge.getRoad().getPlayer().getColor());
+                shapeRenderer.setColor(edge.getRoad().getOwner().getColor());
                 shapeRenderer.rectLine(v1Pos, v2Pos, ROAD_WIDTH);
             }
         }
 
         // Render buildings
-        for (Vertex vertex : elementFactory.getAllVertices()) {
-            if (vertex.hasBuilding()) {
-                Vector2 pos = positionProvider.apply(vertex);
-                shapeRenderer.setColor(vertex.getBuilding().getPlayer().getColor());
-
-                if (vertex.getBuilding() instanceof Town) {
-                    shapeRenderer.circle(pos.x, pos.y, TOWN_RADIUS);
-                } else if (vertex.getBuilding() instanceof City) {
-                    shapeRenderer.rect(pos.x - CITY_SIZE/2, pos.y - CITY_SIZE/2, CITY_SIZE, CITY_SIZE);
-                }
-            }
-        }
+        // TODO: Find building model from mods
 
         shapeRenderer.end();
     }

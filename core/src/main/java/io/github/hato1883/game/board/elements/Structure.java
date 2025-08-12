@@ -26,4 +26,8 @@ public class Structure {
             throw new IllegalStateException("Structure must have an owner");
         this.owner = owner;
     }
+
+    public Player getOwner() {
+        return owner;
+    }
 }

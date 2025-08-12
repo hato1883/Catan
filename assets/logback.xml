@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <conversionRule conversionWord="ccond" converterClass="io.github.hato1883.util.ConditionalLoggerConverter"/>
+
+    <!-- Console appender for colorful output -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%highlight([%d{HH:mm:ss.SSSS}] [%thread/%level]%replace( [%ccond]){" \[(?:->.*)?\]",""}: %msg%n)</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File appender for persistent logs -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/catan.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread/%level]%replace( [%ccond]){" \[\]",""}: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root logger, logs INFO+ to console and file -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+
+    <!-- Fine tune specific loggers, e.g. your mod loader -->
+    <logger name="io.github.hato1883.loader" level="DEBUG" />
+
+</configuration>

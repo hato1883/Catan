@@ -1,9 +1,9 @@
 package io.github.hato1883.game.board.elements;
 
-import io.github.hato1883.game.board.Board;
-import io.github.hato1883.game.board.CubeCoord;
-import io.github.hato1883.game.board.elements.edge.EdgeCoord;
-import io.github.hato1883.game.board.elements.vertex.VertexCoord;
+import io.github.hato1883.api.game.board.IBoard;
+import io.github.hato1883.api.game.board.ICubeCoord;
+import io.github.hato1883.api.game.board.EdgeCoord;
+import io.github.hato1883.api.game.board.VertexCoord;
 
 import java.util.*;
 
@@ -30,15 +30,15 @@ import java.util.*;
  * <ul>
  *     <li>{@link Vertex} - The vertex objects this factory creates</li>
  *     <li>{@link Edge} - The edge objects this factory creates</li>
- *     <li>{@link Board} - The primary consumer of this factory</li>
+ *     <li>{@link IBoard} - The primary consumer of this factory</li>
  * </ul>
  */
 public class BoardElementFactory {
     /** Canonical storage of all vertices by their coordinates */
-    private final Map<VertexCoord, Vertex> vertexMap = new HashMap<>();
+    private final java.util.Map<VertexCoord, Vertex> vertexMap = new HashMap<>();
 
     /** Canonical storage of all edges by their coordinates */
-    private final Map<EdgeCoord, Edge> edgeMap = new HashMap<>();
+    private final java.util.Map<EdgeCoord, Edge> edgeMap = new HashMap<>();
 
     /**
      * Gets or creates a vertex where three tiles meet.
@@ -56,7 +56,7 @@ public class BoardElementFactory {
      * <h3>Edge Cases:</h3>
      * Handles board edges where one tile coordinate may be null.
      */
-    public Vertex getVertex(CubeCoord tile1, CubeCoord tile2, CubeCoord tile3) {
+    public Vertex getVertex(ICubeCoord tile1, ICubeCoord tile2, ICubeCoord tile3) {
         if (tile1 == null && tile2 == null && tile3 == null) {
             throw new IllegalArgumentException("All three coordinates cannot be null");
         }
@@ -72,9 +72,9 @@ public class BoardElementFactory {
      * @throws IllegalArgumentException if array is null or doesn't contain exactly 3 elements
      *
      * <h3>Implementation Note:</h3>
-     * Delegates to {@link #getVertex(CubeCoord, CubeCoord, CubeCoord)} after array validation.
+     * Delegates to {@link #getVertex(ICubeCoord, ICubeCoord, ICubeCoord)} after array validation.
      */
-    private Vertex getVertex(CubeCoord[] adjacentTiles) {
+    private Vertex getVertex(ICubeCoord[] adjacentTiles) {
         if (adjacentTiles == null || adjacentTiles.length != 3) {
             throw new IllegalArgumentException("Must provide exactly 3 adjacent tiles");
         }
@@ -89,9 +89,9 @@ public class BoardElementFactory {
      * @throws IllegalArgumentException if array is null or doesn't contain exactly 3 elements
      *
      * <h3>Implementation Note:</h3>
-     * Delegates to {@link #getVertex(CubeCoord, CubeCoord, CubeCoord)} after array validation.
+     * Delegates to {@link #getVertex(ICubeCoord, ICubeCoord, ICubeCoord)} after array validation.
      */
-    private Vertex getVertex(List<CubeCoord> adjacentTiles) {
+    private Vertex getVertex(List<ICubeCoord> adjacentTiles) {
         if (adjacentTiles == null || adjacentTiles.size() != 3) {
             throw new IllegalArgumentException("Must provide exactly 3 adjacent tiles");
         }

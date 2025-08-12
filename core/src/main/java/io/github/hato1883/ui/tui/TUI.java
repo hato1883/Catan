@@ -1,16 +1,17 @@
 package io.github.hato1883.ui.tui;
 
-import io.github.hato1883.game.board.Board;
-import io.github.hato1883.game.board.types.HexIslandBoard;
+import io.github.hato1883.api.game.board.IBoard;
+import io.github.hato1883.game.board.Map;
+import io.github.hato1883.game.board.types.StandardBoard;
 
 public class TUI {
 
 	// The window handle
 	private long window;
-	private Board gameBoard;
+	private IBoard gameBoard;
 
 	public void run() {
-        this.gameBoard = new HexIslandBoard(3);
+        this.gameBoard = new StandardBoard();
 
 		init();
 		loop();
@@ -28,7 +29,7 @@ public class TUI {
 		}
 	}
 
-	private boolean shouldClose(Board gameBoard) {
+	private boolean shouldClose(Map gameBoard) {
         return false;
 	}
 }

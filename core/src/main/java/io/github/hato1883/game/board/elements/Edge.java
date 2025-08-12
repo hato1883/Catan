@@ -1,15 +1,14 @@
 package io.github.hato1883.game.board.elements;
 
 import com.badlogic.gdx.math.Vector2;
-import io.github.hato1883.game.board.Board;
-import io.github.hato1883.game.board.CubeCoord;
-import io.github.hato1883.game.board.elements.edge.Road;
+import io.github.hato1883.api.game.board.IBoard;
+import io.github.hato1883.api.game.board.ICubeCoord;
 import io.github.hato1883.game.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.hato1883.game.board.CubeCoord.cubeToWorld;
+import static io.github.hato1883.api.game.board.CubeCordUtils.cubeToWorld;
 import static io.github.hato1883.game.board.elements.Vertex.average;
 
 /**
@@ -36,7 +35,7 @@ import static io.github.hato1883.game.board.elements.Vertex.average;
  * <h3>See Also:</h3>
  * <ul>
  *     <li>{@link Vertex} - The endpoints of each edge</li>
- *     <li>{@link Board} - Manages all edges in the game</li>
+ *     <li>{@link IBoard} - Manages all edges in the game</li>
  *     <li>{@link Player} - Owners of edge structures</li>
  * </ul>
  */
@@ -112,69 +111,6 @@ public class Edge {
         return road != null;
     }
 
-    /**
-     * Determines if a player can build a road on this edge.
-     *
-     * @param road the proposed road to build
-     * @return true if building is allowed by game rules
-     *
-     * <h3>Building Rules:</h3>
-     * <ul>
-     *     <li>Edge must be unoccupied</li>
-     *     <li>Must connect to player's existing:
-     *         <ul>
-     *             <li>Settlement/City</li>
-     *             <li>Or adjacent road</li>
-     *         </ul>
-     *     </li>
-     * </ul>
-     *
-     * <h3>FIXME:</h3>
-     * - Should verify road.getPlayer() isn't null
-     */
-    public boolean canBuild(Road road) {
-        Player builder = road.getPlayer();
-        if (!this.hasRoad()) {
-            // Check adjacent buildings
-            if(vertex1.hasBuilding() && vertex1.getBuilding().getPlayer().equals(builder)) {
-                return true;
-            } else if(vertex2.hasBuilding() && vertex2.getBuilding().getPlayer().equals(builder)) {
-                return true;
-            } else {
-                boolean canBuild = false;
-                // Check connected edges for player's roads
-                for (Edge e : this.vertex1.getAdjacentEdges()) {
-                    if (this.equals(e) || canBuild) continue;
-                    canBuild = e.hasRoad() && e.getRoad().getPlayer().equals(builder);
-                }
-                for (Edge e : this.vertex2.getAdjacentEdges()) {
-                    if (this.equals(e) || canBuild) continue;
-                    canBuild = e.hasRoad() && e.getRoad().getPlayer().equals(builder);
-                }
-                return canBuild;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Attempts to build a road on this edge if allowed by game rules.
-     *
-     * @param road the road to build
-     * @return true if construction succeeded, false otherwise
-     *
-     * <h3>Side Effects:</h3>
-     * - Updates edge's road reference on success
-     * - May affect player's longest road calculation
-     */
-    public boolean build(Road road) {
-        if (this.canBuild(road)) {
-            this.road = road;
-            return true;
-        }
-        return false;
-    }
-
     public Vertex getVertex1() {
         return vertex1;
     }
@@ -182,13 +118,9 @@ public class Edge {
         return vertex2;
     }
 
-    /**
-     * Gets the road type on this edge.
-     * @return the road/ship type, or null if empty
-     */
 
     public static Vector2 computeEdgePosition(Edge edge, float radius, float tileGap) {
-        List<CubeCoord> cords = new ArrayList<>();
+        List<ICubeCoord> cords = new ArrayList<>();
         cords.addAll(edge.getVertex1().getVertexCoord().getAdjacentTiles());
         cords.addAll(edge.getVertex2().getVertexCoord().getAdjacentTiles());
 
@@ -205,5 +137,4 @@ public class Edge {
             throw new IllegalStateException("Not enough cubeCoords to determine vertex position");
         }
     }
-    // public RoadType getRoadType() { ... }
 }

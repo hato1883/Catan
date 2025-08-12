@@ -11,24 +11,26 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import io.github.hato1883.Main;
-import io.github.hato1883.game.board.Board;
-import io.github.hato1883.game.board.BuildingManager;
+import io.github.hato1883.api.game.board.IBoard;
+import io.github.hato1883.game.board.Map;
 import io.github.hato1883.game.board.CubeCoord;
 import io.github.hato1883.game.board.HexTile;
 import io.github.hato1883.game.board.elements.Edge;
 import io.github.hato1883.game.board.elements.Structure;
 import io.github.hato1883.game.board.elements.Vertex;
-import io.github.hato1883.game.board.elements.edge.SimpleRoad;
-import io.github.hato1883.game.board.elements.vertex.Town;
-import io.github.hato1883.game.board.elements.vertex.VertexCoord;
-import io.github.hato1883.game.board.types.HexIslandBoard;
+import io.github.hato1883.api.game.board.VertexCoord;
+import io.github.hato1883.game.board.types.StandardBoard;
 import io.github.hato1883.game.player.Player;
 import io.github.hato1883.game.resource.ResourceType;
+import io.github.hato1883.api.LogManager;
+import org.slf4j.Logger;
 
 import java.util.*;
 
+import static io.github.hato1883.Main.LOGGER_ID;
 import static io.github.hato1883.game.board.elements.Edge.computeEdgePosition;
 import static io.github.hato1883.game.board.elements.Vertex.computeVertexPosition;
+import static io.github.hato1883.util.DelayedFormatter.format;
 
 /**
  * The primary game screen rendering the Catan board with hexagonal tiles and handling player interaction.
@@ -49,6 +51,9 @@ import static io.github.hato1883.game.board.elements.Vertex.computeVertexPositio
  * </ol>
  */
 public class GameBoard implements Screen {
+
+    private static final Logger LOGGER = LogManager.getLogger(LOGGER_ID);
+
     private final Main game;
     private PolygonSpriteBatch polyBatch;
     private SpriteBatch spriteBatch;
@@ -63,13 +68,13 @@ public class GameBoard implements Screen {
     private Texture whiteTexture;
     private boolean assetsLoaded;
 
-    private final Map<HexTile, HexagonSprite> tileToSpriteMap = new HashMap<>();
-    private final Map<Vertex, Vector2> vertexPositionCache = new HashMap<>();
-    private final Map<Edge, Vector2> edgePositionCache = new HashMap<>();
+    private final java.util.Map<HexTile, HexagonSprite> tileToSpriteMap = new HashMap<>();
+    private final java.util.Map<Vertex, Vector2> vertexPositionCache = new HashMap<>();
+    private final java.util.Map<Edge, Vector2> edgePositionCache = new HashMap<>();
 
     // Rendering State
     private int currentLod = -1;
-    private final Map<Integer, List<HexagonSprite>> lodToSprites = new HashMap<>();
+    private final java.util.Map<Integer, List<HexagonSprite>> lodToSprites = new HashMap<>();
     private List<HexagonSprite> currentSpriteList;
     private List<NumberTokenSprite> tokenSprites;
 
@@ -77,7 +82,7 @@ public class GameBoard implements Screen {
     private OrthographicCamera camera;
 
     // Game Model
-    private Board board;
+    private IBoard board;
 
     // Constants
     // TODO: Make tile radius configurable
@@ -121,8 +126,7 @@ public class GameBoard implements Screen {
 
         // Create Sprites for each tile
         // Example: generate a radius-3 hex map (19 tiles)
-        int boardRadius = 3;
-        board = new HexIslandBoard(boardRadius);
+        board = new StandardBoard();
         buildingManager = new BuildingManager(board);
         buildingRenderer = new BuildingRenderer(board.getElementFactory(), this::getScreenPosition, camera);
         interactionHandler = new InteractionHandler(
@@ -223,7 +227,7 @@ public class GameBoard implements Screen {
 
             List<HexagonSprite> sprites = new ArrayList<>(board.getTileCount());
 
-            for (Map.Entry<ResourceType, List<HexTile>> entry : board.groupTilesByResource().entrySet()) {
+            for (java.util.Map.Entry<ResourceType, List<HexTile>> entry : board.groupTilesByResource().entrySet()) {
                 TextureRegion texture = atlas.findRegion(getRegionName(entry.getKey()));
 
                 for (HexTile tile : entry.getValue()) {
@@ -374,16 +378,16 @@ public class GameBoard implements Screen {
         float newProgress = assetManager.getProgress(); // 0.0 to 1.0
         if (newProgress > progress) {
             progress = newProgress;
-            System.out.printf(Locale.US, "Loading: %.2f%%\n", (progress * 100f));
+            LOGGER.info("Loading: {}%", format(Locale.US, "%2.0f", (progress * 100f)));
         }
     }
 
     /**
      * Creates a {@link HexagonSprite} representing a hex tile using the world coordinates and resource type.
      * <p>
-     * The method takes a {@link Map.Entry} of {@link CubeCoord} and {@link HexTile}, which provides both
+     * The method takes a {@link java.util.Map.Entry} of {@link CubeCoord} and {@link HexTile}, which provides both
      * the tile's spatial position and its metadata (e.g. {@link ResourceType}). This is convenient
-     * when iterating over a {@code Map<CubeCoord, HexTile>} structure.
+     * when iterating over a {@code Map<ICubeCoord, HexTile>} structure.
      *
      * <h3>Why Map.Entry?</h3>
      * Using a map entry allows:
@@ -422,8 +426,8 @@ public class GameBoard implements Screen {
         float ySpacing = height * 0.75f + TILE_GAP;
 
         // Convert cube coordinates to world (x, y)
-        float worldX = xSpacing * (coord.q + coord.r / 2f);
-        float worldY = ySpacing * -coord.r; // Negative Z -> downward
+        float worldX = xSpacing * (coord.x() + coord.y() / 2f);
+        float worldY = ySpacing * -coord.y(); // Negative Z -> downward
 
         // Set pos
         sprite.setPosition(worldX - sprite.getOriginX(), worldY - sprite.getOriginY());
@@ -606,10 +610,10 @@ public class GameBoard implements Screen {
      * @param region the texture region to debug
      */
     private void debugAtlasRegion(TextureRegion region) {
-        System.out.println("Region: " + region);
-        System.out.println("U: " + region.getU() + ", U2: " + region.getU2());
-        System.out.println("V: " + region.getV() + ", V2: " + region.getV2());
-        System.out.println("Width: " + region.getRegionWidth() + ", Height: " + region.getRegionHeight());
+        LOGGER.debug("Region: {}", region);
+        LOGGER.debug("U: {}, U2: {}", region.getU(), region.getU2());
+        LOGGER.debug("V: {}, V2: {}", region.getV(), region.getV2());
+        LOGGER.debug("Width: {}, Height: {}", region.getRegionWidth(), region.getRegionHeight());
     }
 
     /**
@@ -636,13 +640,13 @@ public class GameBoard implements Screen {
         float originX = sprite.getOriginX();
         float originY = sprite.getOriginY();
 
-        System.out.println("== HexagonSprite Debug Info ==");
-        System.out.printf("Position: (%.2f, %.2f)\n", x, y);
-        System.out.printf("Size: %.2f x %.2f\n", width, height);
-        System.out.printf("Origin: (%.2f, %.2f)\n", originX, originY);
-        System.out.printf("Bounding Box: [%.2f, %.2f] to [%.2f, %.2f]\n",
+        LOGGER.debug("== HexagonSprite Debug Info ==");
+        LOGGER.debug("Position: ({}, {})", x, y);
+        LOGGER.debug("Size: {} x {}", width, height);
+        LOGGER.debug("Origin: ({}, {})", originX, originY);
+        LOGGER.debug("Bounding Box: [{}, {}] to [{}, {}]",
             x, y, x + width, y + height);
-        System.out.println("================================");
+        LOGGER.debug("================================");
     }
 
     /**
