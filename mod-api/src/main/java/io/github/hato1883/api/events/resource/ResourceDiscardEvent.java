@@ -1,11 +1,12 @@
 package io.github.hato1883.api.events.resource;
 
 import io.github.hato1883.api.events.Cancelable;
-import io.github.hato1883.api.events.GameEventListener;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IGameState;
 import io.github.hato1883.api.game.IPlayer;
-import io.github.hato1883.game.event.EventBus;
-import io.github.hato1883.game.resource.ResourceType;
+import io.github.hato1883.api.game.IResourceType;
 
 import java.util.Map;
 
@@ -28,7 +29,7 @@ import java.util.Map;
  * <h3>See Also:</h3>
  * <ul>
  *   <li>{@link ResourceEvent}</li>
- *   <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */
 public class ResourceDiscardEvent extends ResourceEvent implements Cancelable {
@@ -41,7 +42,7 @@ public class ResourceDiscardEvent extends ResourceEvent implements Cancelable {
      * @param gameState the current game state
      * @param discarded map of all discarded resources
      */
-    public ResourceDiscardEvent(IGameState gameState, IPlayer player, Map<ResourceType, Integer> discarded) {
+    public ResourceDiscardEvent(IGameState gameState, IPlayer player, Map<IResourceType, Integer> discarded) {
         super(gameState, player, discarded);
     }
 

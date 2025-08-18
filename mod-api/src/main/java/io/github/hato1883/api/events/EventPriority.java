@@ -39,5 +39,5 @@ public enum EventPriority {
      * Use for fallback logic, cleanup, or mods that should always run after others.
      * Examples: final adjustments, UI updates, undo/rollback triggers.
      */
-    LOWEST;
+    LOWEST
 }

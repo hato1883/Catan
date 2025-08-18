@@ -1,9 +1,10 @@
 package io.github.hato1883.api.events.phase;
 
-import io.github.hato1883.api.events.GameEventListener;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IGamePhase;
 import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.game.event.EventBus;
 
 /**
  * Event fired periodically while a game phase is active.
@@ -18,9 +19,9 @@ import io.github.hato1883.game.event.EventBus;
  * }</pre>
  * <h3>See Also:</h3>
  * <ul>
- *   <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
  *   <li>{@link PhaseEnterEvent}</li>
  *   <li>{@link PhaseExitEvent}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */
 public class PhaseUpdateEvent extends PhaseEvent {

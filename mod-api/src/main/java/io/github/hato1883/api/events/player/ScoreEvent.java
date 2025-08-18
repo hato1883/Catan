@@ -1,6 +1,6 @@
 package io.github.hato1883.api.events.player;
 
-import io.github.hato1883.api.events.GameEvent;
+import io.github.hato1883.api.events.GameplayEvent;
 import io.github.hato1883.api.game.IGameState;
 import io.github.hato1883.api.game.IPlayer;
 import io.github.hato1883.api.events.lifecycle.VictoryConditionCheckEvent;
@@ -27,7 +27,7 @@ import io.github.hato1883.api.events.lifecycle.VictoryConditionCheckEvent;
  *   <li>{@link ScoreUpdateEvent}</li>
  * </ul>
  */
-public abstract class ScoreEvent extends GameEvent {
+public abstract class ScoreEvent extends GameplayEvent {
 
     private final IPlayer player;
     private final int score;

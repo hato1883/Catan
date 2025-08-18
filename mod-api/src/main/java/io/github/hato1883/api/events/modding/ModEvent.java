@@ -1,8 +1,7 @@
 package io.github.hato1883.api.events.modding;
 
-import io.github.hato1883.api.events.GameEvent;
-import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.api.modding.CatanMod;
+import io.github.hato1883.api.events.IEvent;
+import io.github.hato1883.api.mod.CatanMod;
 
 /**
  * Base class for all mod lifecycle-related events.
@@ -26,18 +25,16 @@ import io.github.hato1883.api.modding.CatanMod;
  *   <li>{@link ModDisableEvent}</li>
  * </ul>
  */
-public abstract class ModEvent extends GameEvent {
+public abstract class ModEvent implements IEvent {
 
     private final CatanMod mod;
 
     /**
      * Constructs a new ModEvent.
      *
-     * @param gameState the current game state
      * @param mod       the mod associated with this event
      */
-    public ModEvent(IGameState gameState, CatanMod mod) {
-        super(gameState);
+    public ModEvent(CatanMod mod) {
         this.mod = mod;
     }
 

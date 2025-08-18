@@ -1,7 +1,6 @@
 package io.github.hato1883.api.events;
 
 import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.game.event.EventBus;
 
 /**
  * Event triggered when a random game event occurs such as a flood or earthquake.
@@ -19,10 +18,10 @@ import io.github.hato1883.game.event.EventBus;
  * <h3>See Also:</h3>
  * <ul>
  *   <li>{@link EventListener} for automatic registration or use </li>
- *   <li>{@link EventBus#registerListener(String, Class, EventPriority, GameEventListener)} for manuel registration</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */
-public class RandomEventTriggerEvent extends GameEvent implements Cancelable {
+public class RandomEventTriggerEvent extends GameplayEvent  implements Cancelable {
     private final String eventName;
     private boolean canceled = false;
 

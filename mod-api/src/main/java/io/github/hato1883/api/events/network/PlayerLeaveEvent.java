@@ -1,9 +1,9 @@
 package io.github.hato1883.api.events.network;
 
-import io.github.hato1883.api.events.GameEventListener;
-import io.github.hato1883.api.game.IGameState;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IPlayer;
-import io.github.hato1883.game.event.EventBus;
 import io.github.hato1883.api.events.player.PlayerEvent;
 
 /**
@@ -19,7 +19,7 @@ import io.github.hato1883.api.events.player.PlayerEvent;
  * <h3>See Also:</h3>
  * <ul>
  *     <li>{@link PlayerEvent}</li>
- *     <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */
 public class PlayerLeaveEvent extends NetworkEvent {
@@ -29,11 +29,9 @@ public class PlayerLeaveEvent extends NetworkEvent {
     /**
      * Creates a new player leave event.
      *
-     * @param gameState the current game state
      * @param player    the player who left
      */
-    public PlayerLeaveEvent(IGameState gameState, IPlayer player) {
-        super(gameState);
+    public PlayerLeaveEvent(IPlayer player) {
         this.player = player;
     }
 

@@ -2,11 +2,11 @@ package io.github.hato1883.api.events.player;
 
 
 import io.github.hato1883.api.events.Cancelable;
-import io.github.hato1883.api.events.GameEvent;
-import io.github.hato1883.api.events.GameEventListener;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IGameState;
 import io.github.hato1883.api.game.IPlayer;
-import io.github.hato1883.game.event.EventBus;
 
 /**
  * Fired when a player is rolling the dice.
@@ -21,9 +21,9 @@ import io.github.hato1883.game.event.EventBus;
  *
  * <h3>See Also:</h3>
  * <ul>
- *   <li>{@link GameEvent}</li>
+ *   <li>{@link PlayerEvent}</li>
  *   <li>{@link DiceRollResultEvent}</li>
- *   <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li>
  * </ul>
  */
 public class DiceRollStartEvent extends PlayerRollDiceEvent implements Cancelable {

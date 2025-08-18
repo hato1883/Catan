@@ -1,9 +1,9 @@
 package io.github.hato1883.api.events.network;
 
-import io.github.hato1883.api.events.GameEvent;
-import io.github.hato1883.api.events.GameEventListener;
-import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.game.event.EventBus;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
+import io.github.hato1883.api.events.IEvent;
 
 /**
  * Fired when a network any network event occurs.
@@ -21,18 +21,8 @@ import io.github.hato1883.game.event.EventBus;
  *   <li>{@link NetworkConnectedEvent}</li>
  *   <li>{@link NetworkDisconnectedEvent}</li>
  *   <li>{@link NetworkMessageReceivedEvent}</li>
- *   <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */
-public class NetworkEvent extends GameEvent {
-
-    /**
-     * Creates a new NetworkConnectedEvent.
-     *
-     * @param gameState the current game state
-     */
-    public NetworkEvent(IGameState gameState) {
-        super(gameState);
-    }
-}
+public abstract class NetworkEvent implements IEvent {}
 

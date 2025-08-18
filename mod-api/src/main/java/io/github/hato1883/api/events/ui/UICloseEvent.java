@@ -1,9 +1,10 @@
 package io.github.hato1883.api.events.ui;
 
 import io.github.hato1883.api.events.Cancelable;
-import io.github.hato1883.api.events.GameEventListener;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.game.event.EventBus;
 
 /**
  * Fired when a UI component is closed by a player or the system.
@@ -23,7 +24,7 @@ import io.github.hato1883.game.event.EventBus;
  *     <li>{@link UIEvent}</li>
  *     <li>{@link UIOpenEvent}</li>
  *     <li>{@link UIInteractEvent}</li>
- *     <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */
 public class UICloseEvent extends UIEvent implements Cancelable {
@@ -33,11 +34,10 @@ public class UICloseEvent extends UIEvent implements Cancelable {
     /**
      * Creates a new UICloseEvent.
      *
-     * @param gameState The current game state.
      * @param uiId      The unique identifier for the UI being closed.
      */
-    public UICloseEvent(IGameState gameState, String uiId) {
-        super(gameState, uiId);
+    public UICloseEvent(String uiId) {
+        super(uiId);
     }
 
     /**

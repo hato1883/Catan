@@ -1,5 +1,6 @@
 package io.github.hato1883.api.events.registry;
 
+import io.github.hato1883.api.Identifier;
 import io.github.hato1883.api.events.Cancelable;
 import io.github.hato1883.api.registries.IRegistry;
 
@@ -8,7 +9,7 @@ public class RegistryReplaceEvent<T> extends RegistryEvent<T> implements Cancela
     private boolean isCanceled = false;
     private final T oldEntry;
 
-    public RegistryReplaceEvent(IRegistry<T> registry, String id, T oldEntry, T newEntry) {
+    public RegistryReplaceEvent(IRegistry<T> registry, Identifier id, T oldEntry, T newEntry) {
         super(registry, id, newEntry);
         this.oldEntry = oldEntry;
     }

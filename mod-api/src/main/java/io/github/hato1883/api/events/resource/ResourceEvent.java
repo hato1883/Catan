@@ -1,9 +1,9 @@
 package io.github.hato1883.api.events.resource;
 
-import io.github.hato1883.api.events.GameEvent;
+import io.github.hato1883.api.events.player.PlayerEvent;
 import io.github.hato1883.api.game.IGameState;
 import io.github.hato1883.api.game.IPlayer;
-import io.github.hato1883.game.resource.ResourceType;
+import io.github.hato1883.api.game.IResourceType;
 
 import java.util.Map;
 
@@ -28,45 +28,16 @@ import java.util.Map;
  *   <li>{@link ResourceProductionEvent}</li>
  * </ul>
  */
-public abstract class ResourceEvent extends GameEvent {
+public abstract class ResourceEvent extends PlayerEvent {
 
-    protected final IPlayer player;
-    protected final Map<ResourceType, Integer> resources;
+    private final Map<IResourceType, Integer> resources;
 
-    /**
-     * Constructs a new ResourceEvent.
-     *
-     * @param gameState    the current game state
-     * @param player       the player involved
-     * @param resources    map of resources involved
-     */
-    protected ResourceEvent(IGameState gameState, IPlayer player, Map<ResourceType, Integer> resources) {
-        super(gameState);
-        this.player = player;
+    public ResourceEvent(IGameState state, IPlayer player, Map<IResourceType, Integer> resources) {
+        super(state, player);
         this.resources = resources;
     }
 
-    /**
-     * @return the player involved in the event
-     *
-     * <h3>Example Usage:</h3>
-     * <pre>{@code
-     * IPlayer player = event.getPlayer();
-     * }</pre>
-     */
-    public IPlayer getPlayer() {
-        return player;
-    }
-
-    /**
-     * @return map of resources involved in the event
-     *
-     * <h3>Example Usage:</h3>
-     * <pre>{@code
-     * Map<ResourceType, Integer> resources = event.getResources();
-     * }</pre>
-     */
-    public Map<ResourceType, Integer> getResources() {
+    public Map<IResourceType, Integer> getResources() {
         return resources;
     }
 }

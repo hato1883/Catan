@@ -1,8 +1,8 @@
 package io.github.hato1883.api.events.network;
 
-import io.github.hato1883.api.events.GameEventListener;
-import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.game.event.EventBus;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 
 /**
  * Fired when a network connection is closed or lost.
@@ -22,18 +22,16 @@ import io.github.hato1883.game.event.EventBus;
  * <ul>
  *   <li>{@link NetworkConnectedEvent}</li>
  *   <li>{@link NetworkMessageReceivedEvent}</li>
- *   <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */
 public class NetworkDisconnectedEvent extends NetworkEvent {
 
     /**
      * Creates a new NetworkDisconnectedEvent.
-     *
-     * @param gameState the current game state
      */
-    public NetworkDisconnectedEvent(IGameState gameState) {
-        super(gameState);
+    public NetworkDisconnectedEvent() {
+        super();
     }
 }
 

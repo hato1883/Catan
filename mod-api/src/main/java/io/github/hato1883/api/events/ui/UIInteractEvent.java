@@ -1,9 +1,9 @@
 package io.github.hato1883.api.events.ui;
 
 import io.github.hato1883.api.events.Cancelable;
-import io.github.hato1883.api.events.GameEventListener;
-import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.game.event.EventBus;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 
 /**
  * Fired when the player interacts with a UI component.
@@ -25,7 +25,7 @@ import io.github.hato1883.game.event.EventBus;
  *     <li>{@link UIEvent}</li>
  *     <li>{@link UIOpenEvent}</li>
  *     <li>{@link UICloseEvent}</li>
- *     <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */
 public class UIInteractEvent extends UIEvent implements Cancelable {
@@ -36,12 +36,11 @@ public class UIInteractEvent extends UIEvent implements Cancelable {
     /**
      * Creates a new UIInteractEvent.
      *
-     * @param gameState The current game state.
      * @param uiId      The unique identifier for the UI being interacted with.
      * @param elementId The unique identifier for the specific UI element clicked or used.
      */
-    public UIInteractEvent(IGameState gameState, String uiId, String elementId) {
-        super(gameState, uiId);
+    public UIInteractEvent(String uiId, String elementId) {
+        super(uiId);
         this.elementId = elementId;
     }
 

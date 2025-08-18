@@ -1,6 +1,6 @@
 package io.github.hato1883.api.events.player;
 
-import io.github.hato1883.api.events.GameEvent;
+import io.github.hato1883.api.events.GameplayEvent;
 import io.github.hato1883.api.game.IGameState;
 import io.github.hato1883.api.game.IPlayer;
 import io.github.hato1883.api.events.network.PlayerJoinEvent;
@@ -26,7 +26,7 @@ import io.github.hato1883.api.events.network.PlayerLeaveEvent;
  *     <li>{@link PlayerResourceUpdateEvent}</li>
  * </ul>
  */
-public abstract class PlayerEvent extends GameEvent {
+public abstract class PlayerEvent extends GameplayEvent {
 
     private final IPlayer player;
 
@@ -61,4 +61,3 @@ public abstract class PlayerEvent extends GameEvent {
         return player;
     }
 }
-

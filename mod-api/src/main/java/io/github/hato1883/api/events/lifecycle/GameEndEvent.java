@@ -2,9 +2,10 @@ package io.github.hato1883.api.events.lifecycle;
 
 
 import io.github.hato1883.api.events.Cancelable;
-import io.github.hato1883.api.events.GameEventListener;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.game.event.EventBus;
 
 /**
  * Fired when a game session ends, typically when a player wins or the game is stopped.
@@ -22,7 +23,7 @@ import io.github.hato1883.game.event.EventBus;
  * <ul>
  *   <li>{@link GameLifecycleEvent}</li>
  *   <li>{@link GameStartEvent}</li>
- *   <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li>
  * </ul>
  */
 public class GameEndEvent extends GameLifecycleEvent implements Cancelable {

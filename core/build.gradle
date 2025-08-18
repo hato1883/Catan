@@ -4,6 +4,11 @@ eclipse.project.name = appName + '-core'
 dependencies {
   implementation project(':mod-api')
   api "com.badlogicgames.gdx:gdx:$gdxVersion"
+
+  compileOnly("org.jetbrains:annotations:26.0.2")
+
+  implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
   implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
   implementation 'com.google.code.gson:gson:2.10.1'
   implementation 'org.slf4j:slf4j-api:2.0.9'

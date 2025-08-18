@@ -1,9 +1,10 @@
 package io.github.hato1883.api.events.player;
 
-import io.github.hato1883.api.events.GameEventListener;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IGameState;
 import io.github.hato1883.api.game.IPlayer;
-import io.github.hato1883.game.event.EventBus;
 
 /**
  * Fired when a player is eliminated from the game.
@@ -20,7 +21,7 @@ import io.github.hato1883.game.event.EventBus;
  * <h3>See Also:</h3>
  * <ul>
  *     <li>{@link PlayerEvent}</li>
- *     <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */
 public class PlayerEliminatedEvent extends PlayerEvent {

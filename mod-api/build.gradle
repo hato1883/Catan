@@ -12,6 +12,16 @@ repositories {
 }
 
 dependencies {
+  compileOnly("org.jetbrains:annotations:26.0.2")
+
+  implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+  implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+  implementation 'org.slf4j:slf4j-api:2.0.9'
+
+  runtimeOnly "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+  runtimeOnly "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
   // Keep this minimal, probably no external dependencies here
 }
 

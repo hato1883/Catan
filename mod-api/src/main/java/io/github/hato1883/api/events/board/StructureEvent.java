@@ -52,7 +52,7 @@ public abstract class StructureEvent extends BoardEvent {
      *
      * <h3>See Also:</h3>
      * <ul>
-     *     <li>{@link io.github.hato1883.api.game.board.IStructure}</li>
+     *     <li>{@link IStructure}</li>
      * </ul>
      */
     public IStructure getStructure() {

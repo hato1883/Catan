@@ -1,11 +1,10 @@
 package io.github.hato1883.api.events.network;
 
 import io.github.hato1883.api.events.Cancelable;
-import io.github.hato1883.api.events.GameEvent;
-import io.github.hato1883.api.events.GameEventListener;
-import io.github.hato1883.api.game.IGameState;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IPlayer;
-import io.github.hato1883.game.event.EventBus;
 
 /**
  * Event fired when a chat message is sent by a player.
@@ -23,11 +22,11 @@ import io.github.hato1883.game.event.EventBus;
  *
  * <h3>See Also:</h3>
  * <ul>
- *   <li>{@link CancellableGameEvent}</li>
- *   <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link Cancelable.CancellableGameEvent}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li>
  * </ul>
  */
-public class ChatMessageEvent extends GameEvent implements Cancelable {
+public class ChatMessageEvent extends NetworkEvent implements Cancelable {
     private final IPlayer sender;
     private String message;
     private boolean canceled = false;
@@ -35,12 +34,10 @@ public class ChatMessageEvent extends GameEvent implements Cancelable {
     /**
      * Constructs a new ChatMessageEvent.
      *
-     * @param gameState The current game state.
      * @param sender The name of the player sending the message.
      * @param message The chat message content.
      */
-    public ChatMessageEvent(IGameState gameState, IPlayer sender, String message) {
-        super(gameState);
+    public ChatMessageEvent(IPlayer sender, String message) {
         this.sender = sender;
         this.message = message;
     }

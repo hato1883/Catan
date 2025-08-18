@@ -2,9 +2,10 @@ package io.github.hato1883.api.events.phase;
 
 
 import io.github.hato1883.api.events.Cancelable;
-import io.github.hato1883.api.events.GameEventListener;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.game.event.EventBus;
 
 /**
  * Event fired at the end of a player's turn.
@@ -20,7 +21,7 @@ import io.github.hato1883.game.event.EventBus;
  * <ul>
  *   <li>{@link TurnStartEvent}</li>
  *   <li>{@link TurnEvent}</li>
- *   <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */
 public class TurnEndEvent extends TurnEvent implements Cancelable {

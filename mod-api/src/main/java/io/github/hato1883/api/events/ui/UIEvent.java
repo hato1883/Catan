@@ -1,7 +1,6 @@
 package io.github.hato1883.api.events.ui;
 
-import io.github.hato1883.api.events.GameEvent;
-import io.github.hato1883.api.game.IGameState;
+import io.github.hato1883.api.events.IEvent;
 
 /**
  * Base class for all user interface-related events.
@@ -24,18 +23,16 @@ import io.github.hato1883.api.game.IGameState;
  *     <li>{@link UIInteractEvent}</li>
  * </ul>
  */
-public abstract class UIEvent extends GameEvent {
+public abstract class UIEvent implements IEvent {
 
     private final String uiId;
 
     /**
      * Creates a new UIEvent.
      *
-     * @param gameState The current game state.
      * @param uiId      The unique identifier for the UI component.
      */
-    public UIEvent(IGameState gameState, String uiId) {
-        super(gameState);
+    public UIEvent(String uiId) {
         this.uiId = uiId;
     }
 

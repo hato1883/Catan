@@ -1,10 +1,11 @@
 package io.github.hato1883.api.events.board;
 
 import io.github.hato1883.api.events.Cancelable;
-import io.github.hato1883.api.events.GameEvent;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IGameState;
 import io.github.hato1883.api.game.board.IHexTile;
-import io.github.hato1883.game.event.EventBus;
 
 /**
  * Fired when a hex tile is revealed to players, usually due to exploration or specific
@@ -30,8 +31,8 @@ import io.github.hato1883.game.event.EventBus;
  *
  * <h3>See Also:</h3>
  * <ul>
- *   <li>{@link GameEvent}</li>
- *   <li>{@link EventBus#registerListener(Class, io.github.hato1883.api.events.GameEventListener)}</li>
+ *     <li>{@link BoardEvent}</li>
+ *     <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li>
  * </ul>
  */
 public class TileRevealEvent extends BoardEvent implements Cancelable {
@@ -67,7 +68,7 @@ public class TileRevealEvent extends BoardEvent implements Cancelable {
      * <h3>See Also:</h3>
      * <ul>
      *   <li>{@link IHexTile}</li>
-     *   <li>{@link #getGameState()}</li>
+     *   <li>{@link #getState()}</li>
      * </ul>
      */
     public IHexTile getTile() {

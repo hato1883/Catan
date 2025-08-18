@@ -1,11 +1,12 @@
 package io.github.hato1883.api.events.resource;
 
 import io.github.hato1883.api.events.Cancelable;
-import io.github.hato1883.api.events.GameEventListener;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IGameState;
 import io.github.hato1883.api.game.IPlayer;
-import io.github.hato1883.game.event.EventBus;
-import io.github.hato1883.game.resource.ResourceType;
+import io.github.hato1883.api.game.IResourceType;
 
 import java.util.Map;
 
@@ -24,14 +25,14 @@ import java.util.Map;
  * <h3>See Also:</h3>
  * <ul>
  *   <li>{@link ResourceEvent}</li>
- *   <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */
 public class ResourceStealEvent extends ResourceEvent implements Cancelable {
     private final IPlayer victim;
     private boolean canceled = false;
 
-    public ResourceStealEvent(IGameState gameState, IPlayer thief, IPlayer victim, Map<ResourceType, Integer> resources) {
+    public ResourceStealEvent(IGameState gameState, IPlayer thief, IPlayer victim, Map<IResourceType, Integer> resources) {
         super(gameState, thief, resources);
         this.victim = victim;
     }

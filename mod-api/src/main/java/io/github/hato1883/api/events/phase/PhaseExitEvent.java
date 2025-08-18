@@ -1,10 +1,11 @@
 package io.github.hato1883.api.events.phase;
 
 import io.github.hato1883.api.events.Cancelable;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
 import io.github.hato1883.api.game.IGamePhase;
 import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.api.events.GameEventListener;
-import io.github.hato1883.game.event.EventBus;
+import io.github.hato1883.api.events.IEventListener;
 
 /**
  * Event fired when a game phase is exited.
@@ -17,9 +18,9 @@ import io.github.hato1883.game.event.EventBus;
  * }</pre>
  * <h3>See Also:</h3>
  * <ul>
- *   <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
  *   <li>{@link PhaseEnterEvent}</li>
  *   <li>{@link PhaseUpdateEvent}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */
 public class PhaseExitEvent extends PhaseEvent implements Cancelable {

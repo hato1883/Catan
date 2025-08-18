@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <conversionRule conversionWord="ccond" converterClass="io.github.hato1883.util.ConditionalLoggerConverter"/>
+    <conversionRule conversionWord="ccond" converterClass="io.github.hato1883.core.util.ConditionalLoggerConverter"/>
+    <conversionRule conversionWord="alignedmsg" converterClass="io.github.hato1883.core.util.AlignedMessageConverter"/>
 
     <!-- Console appender for colorful output -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%highlight([%d{HH:mm:ss.SSSS}] [%thread/%level]%replace( [%ccond]){" \[(?:->.*)?\]",""}: %msg%n)</pattern>
+            <pattern>  %highlight(%alignedmsg([%d{HH:mm:ss.SSSS}] [%thread/%level]%replace( [%ccond]){" \[(?:->.*)?\]",""}: %msg%n)) </pattern>
         </encoder>
     </appender>
 
@@ -15,7 +16,7 @@
         <file>logs/catan.log</file>
         <append>true</append>
         <encoder>
-            <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread/%level]%replace( [%ccond]){" \[\]",""}: %msg%n</pattern>
+            <pattern>%alignedmsg([%d{HH:mm:ss}] [%thread/%level]%replace( [%ccond]){" \[(?:->.*)?\]",""}: %msg%n))</pattern>
         </encoder>
     </appender>
 

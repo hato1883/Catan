@@ -6,9 +6,15 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface IBoard {
+
+    void setName(String name);
+    void setDimensions(Dimension dimension);
+
+    void addTile(IHexTile tile);
     Collection<IHexTile> getTiles();
     Map<ITileType, List<IHexTile>> getTilesGroupedByTileType();
     Optional<IHexTile> getTile(ICubeCoord coord);
+    int getTileCount();
 
     Collection<IStructure> getStructures();
     Collection<IBuilding> getBuildings();

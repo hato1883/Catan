@@ -1,6 +1,6 @@
 package io.github.hato1883.api.events.phase;
 
-import io.github.hato1883.api.events.GameEvent;
+import io.github.hato1883.api.events.GameplayEvent;
 import io.github.hato1883.api.game.IGameState;
 
 /**
@@ -22,10 +22,10 @@ import io.github.hato1883.api.game.IGameState;
  * <ul>
  *   <li>{@link TurnStartEvent}</li>
  *   <li>{@link TurnEndEvent}</li>
- *   <li>{@link GameEvent}</li>
+ *   <li>{@link GameplayEvent}</li>
  * </ul>
  */
-public abstract class TurnEvent extends GameEvent {
+public abstract class TurnEvent extends GameplayEvent {
 
     /**
      * Constructs a TurnEvent with the current game state.
@@ -34,29 +34,5 @@ public abstract class TurnEvent extends GameEvent {
      */
     public TurnEvent(IGameState gameState) {
         super(gameState);
-    }
-
-    /**
-     * Gets the current game state at the time this event was fired.
-     *
-     * <h3>Defaults:</h3>
-     * Returns the IGameState passed at event creation.
-     *
-     * <h3>Example Usage:</h3>
-     * <pre>{@code
-     * IGameState state = event.getGameState();
-     * // inspect current player, phase, etc.
-     * }</pre>
-     *
-     * <h3>See Also:</h3>
-     * <ul>
-     *   <li>{@link IGameState}</li>
-     * </ul>
-     *
-     * @return the current game state
-     */
-    @Override
-    public IGameState getGameState() {
-        return super.getGameState();
     }
 }

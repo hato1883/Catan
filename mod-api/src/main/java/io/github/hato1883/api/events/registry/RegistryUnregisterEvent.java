@@ -1,5 +1,6 @@
 package io.github.hato1883.api.events.registry;
 
+import io.github.hato1883.api.Identifier;
 import io.github.hato1883.api.events.Cancelable;
 import io.github.hato1883.api.registries.IRegistry;
 
@@ -7,7 +8,7 @@ public class RegistryUnregisterEvent<T> extends RegistryEvent<T> implements Canc
 
     private boolean isCanceled = false;
 
-    public RegistryUnregisterEvent(IRegistry<T> registry, String id, T entry) {
+    public RegistryUnregisterEvent(IRegistry<T> registry, Identifier id, T entry) {
         super(registry, id, entry);
     }
 

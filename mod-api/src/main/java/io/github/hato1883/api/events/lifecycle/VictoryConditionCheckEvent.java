@@ -1,10 +1,11 @@
 package io.github.hato1883.api.events.lifecycle;
 
 import io.github.hato1883.api.events.Cancelable;
-import io.github.hato1883.api.events.GameEventListener;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IGameState;
 import io.github.hato1883.api.game.IPlayer;
-import io.github.hato1883.game.event.EventBus;
 import io.github.hato1883.api.events.player.ScoreEvent;
 import io.github.hato1883.api.events.player.ScoreUpdateEvent;
 
@@ -28,7 +29,7 @@ import io.github.hato1883.api.events.player.ScoreUpdateEvent;
  * <ul>
  *   <li>{@link ScoreEvent}</li>
  *   <li>{@link ScoreUpdateEvent}</li>
- *   <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li>
  * </ul>
  */
 public class VictoryConditionCheckEvent extends ScoreEvent implements Cancelable {

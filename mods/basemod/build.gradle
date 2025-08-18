@@ -12,15 +12,30 @@ repositories {
 }
 
 dependencies {
+  implementation project(':core')
   implementation project(':mod-api')
+  runtimeOnly project(':core')
+  implementation 'org.slf4j:slf4j-api:2.0.9'
 }
+
+import groovy.json.JsonSlurper
+
+def modJson = new JsonSlurper().parse(file("$projectDir/src/main/resources/catan.mod.json"))
+
+version = modJson.version
 
 jar {
   archiveBaseName.set('catan-base-mod')
 
-  // Include mod descriptor in jar root
-  from('src/main/resources') {
-    include 'catan.mod.json'
-    into '/'
-  }
+  /*
+  Include mod descriptor in jar root
+    from('src/main/resources') {
+      include 'catan.mod.json'
+      into '/'
+    }
+  */
+
+
+
+
 }

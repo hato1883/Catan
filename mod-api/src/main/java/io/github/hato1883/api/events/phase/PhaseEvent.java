@@ -1,6 +1,6 @@
 package io.github.hato1883.api.events.phase;
 
-import io.github.hato1883.api.events.GameEvent;
+import io.github.hato1883.api.events.GameplayEvent;
 import io.github.hato1883.api.game.IGamePhase;
 import io.github.hato1883.api.game.IGameState;
 
@@ -22,7 +22,7 @@ import io.github.hato1883.api.game.IGameState;
  *   <li>{@link PhaseExitEvent}</li>
  * </ul>
  */
-public abstract class PhaseEvent extends GameEvent {
+public abstract class PhaseEvent extends GameplayEvent {
     private final IGamePhase phase;
 
     /**
@@ -47,10 +47,6 @@ public abstract class PhaseEvent extends GameEvent {
      * IGamePhase phase = event.getPhase();
      * System.out.println("Current phase: " + phase.getName());
      * }</pre>
-     * <h3>See Also:</h3>
-     * <ul>
-     *   <li>{@link #getGameState()}</li>
-     * </ul>
      */
     public IGamePhase getPhase() {
         return phase;

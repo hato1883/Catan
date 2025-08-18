@@ -36,6 +36,9 @@ if (JavaVersion.current().isJava9Compatible()) {
 }
 
 dependencies {
+  implementation project(':core')
+  implementation project(':mod-api')
+
   implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
   implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
   implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
@@ -45,8 +48,6 @@ dependencies {
   runtimeOnly "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
   runtimeOnly "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
 
-  implementation project(':core')
-
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-backend-lwjgl3:$graalHelperVersion"
 
@@ -54,6 +55,7 @@ dependencies {
 }
 
 def os = System.properties['os.name'].toLowerCase()
+
 
 run {
   workingDir = rootProject.file('assets').path
@@ -83,6 +85,56 @@ jar {
   doLast {
     file(archiveFile).setExecutable(true, false)
   }
+}
+
+def getGameDataDir() {
+  def os = System.getProperty("os.name").toLowerCase()
+  def userHome = System.getProperty("user.home")
+  def gameName = "catan" // match your GAME_NAME constant
+
+  if (os.contains("win")) {
+    def appData = System.getenv("APPDATA")
+    if (appData != null) {
+      return file("${appData}/${gameName}")
+    } else {
+      return file("${userHome}/${gameName}")
+    }
+  } else if (os.contains("mac")) {
+    return file("${userHome}/Library/Application Support/${gameName}")
+  } else {
+    // Linux / Unix fallback
+    return file("${userHome}/.local/share/${gameName}")
+  }
+}
+def modsDir = getGameDataDir().toPath().resolve("mods").toFile()
+// Task to clean existing mod JARs in the mods folder
+tasks.register("cleanMods", Delete) {
+  doFirst {
+    println "Cleaning existing mods in ${modsDir}"
+  }
+  delete fileTree(modsDir) {
+    include "*.jar"
+  }
+}
+
+tasks.register("copyMods", Copy) {
+  dependsOn(":mods:basemod:jar")  // always rebuild basemod
+  from(project(":mods:basemod").tasks.jar)
+  dependsOn(":mods:basemod-duplicate:jar")  // always rebuild basemod
+  from(project(":mods:basemod-duplicate").tasks.jar)
+  into(modsDir)
+  doFirst {
+    println "Copying basemod.jar to ${destinationDir}"
+  }
+}
+
+// Make copyMods depend on cleaning old mods
+tasks.named("copyMods") {
+  dependsOn("cleanMods")
+}
+
+tasks.named("run") {
+  dependsOn("copyMods")
 }
 
 // Builds a JAR that only includes the files needed to run on macOS, not Windows or Linux.

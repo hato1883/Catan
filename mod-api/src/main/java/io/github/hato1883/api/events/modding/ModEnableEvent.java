@@ -2,10 +2,9 @@ package io.github.hato1883.api.events.modding;
 
 import io.github.hato1883.api.events.Cancelable;
 import io.github.hato1883.api.events.EventPriority;
-import io.github.hato1883.api.events.GameEventListener;
-import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.api.modding.CatanMod;
-import io.github.hato1883.game.event.EventBus;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
+import io.github.hato1883.api.mod.CatanMod;
 
 /**
  * Fired when a mod is enabled.
@@ -20,8 +19,7 @@ import io.github.hato1883.game.event.EventBus;
  * <h3>See Also:</h3>
  * <ul>
  *   <li>{@link ModEvent}</li>
- *   <li>{@link EventBus#registerListener(String, Class, EventPriority, GameEventListener)}</li>
- * </ul>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  */
 public class ModEnableEvent extends ModEvent implements Cancelable {
 
@@ -30,11 +28,10 @@ public class ModEnableEvent extends ModEvent implements Cancelable {
     /**
      * Constructs a new ModEnableEvent.
      *
-     * @param gameState the current game state
      * @param mod       the mod being enabled
      */
-    public ModEnableEvent(IGameState gameState, CatanMod mod) {
-        super(gameState, mod);
+    public ModEnableEvent(CatanMod mod) {
+        super(mod);
     }
 
     /**

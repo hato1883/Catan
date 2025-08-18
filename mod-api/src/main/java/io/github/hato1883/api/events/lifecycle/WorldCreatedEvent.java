@@ -1,8 +1,9 @@
 package io.github.hato1883.api.events.lifecycle;
 
-import io.github.hato1883.api.events.GameEventListener;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.game.event.EventBus;
 
 /**
  * Event fired when the game world has been created.
@@ -25,7 +26,7 @@ import io.github.hato1883.game.event.EventBus;
  *   <li>{@link WorldLifecycleEvent}</li>
  *   <li>{@link WorldInitEvent}</li>
  *   <li>{@link WorldLoadEvent}</li>
- *   <li>{@link EventBus#registerListener(Class, GameEventListener)}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li>
  * </ul>
  */
 public class WorldCreatedEvent extends WorldLifecycleEvent {
