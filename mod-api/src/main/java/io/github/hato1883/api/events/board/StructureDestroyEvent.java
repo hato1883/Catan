@@ -4,8 +4,8 @@ import io.github.hato1883.api.events.EventPriority;
 import io.github.hato1883.api.events.IEventBus;
 import io.github.hato1883.api.events.Cancelable;
 import io.github.hato1883.api.events.IEventListener;
-import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.api.game.board.IStructure;
+import io.github.hato1883.api.world.IGameState;
+import io.github.hato1883.api.world.board.IStructure;
 
 /**
  * Fired when a structure is about to be destroyed.

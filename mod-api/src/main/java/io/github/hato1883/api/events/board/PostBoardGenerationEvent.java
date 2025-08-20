@@ -1,8 +1,7 @@
 package io.github.hato1883.api.events.board;
 
-import io.github.hato1883.api.events.IEvent;
-import io.github.hato1883.api.game.board.BoardGenerationConfig;
-import io.github.hato1883.api.game.board.IBoard;
+import io.github.hato1883.api.world.board.BoardGenerationConfig;
+import io.github.hato1883.api.world.board.IBoard;
 
 import java.util.Random;
 

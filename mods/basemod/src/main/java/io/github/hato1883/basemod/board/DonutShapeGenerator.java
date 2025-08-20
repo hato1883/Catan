@@ -1,9 +1,9 @@
 package io.github.hato1883.basemod.board;
 
-import io.github.hato1883.api.game.board.BoardGenerationConfig;
-import io.github.hato1883.api.game.board.ICubeCoord;
-import io.github.hato1883.api.game.board.IShapeGenerator;
-import io.github.hato1883.core.game.board.CubeCoord;
+import io.github.hato1883.api.world.board.BoardGenerationConfig;
+import io.github.hato1883.api.world.board.ICubeCoord;
+import io.github.hato1883.api.world.board.IShapeGenerator;
+import io.github.hato1883.core.game.world.board.CubeCoord;
 
 import java.util.HashSet;
 import java.util.Random;

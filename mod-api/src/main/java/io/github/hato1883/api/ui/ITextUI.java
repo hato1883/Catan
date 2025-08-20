@@ -1,6 +1,6 @@
 package io.github.hato1883.api.ui;
 
-import io.github.hato1883.api.game.board.IBoard;
+import io.github.hato1883.api.world.board.IBoard;
 
 public interface ITextUI {
 

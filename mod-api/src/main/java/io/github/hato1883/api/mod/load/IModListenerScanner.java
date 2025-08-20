@@ -10,5 +10,5 @@ import java.util.List;
  * executor is injected in concrete classes.
  */
 public interface IModListenerScanner {
-    void scanAndRegister(List<ILoadedMod> mods, IEventListenerRegistrar registrar);
+    void scanAndRegister(List<ILoadedMod> mods);
 }

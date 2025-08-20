@@ -2,8 +2,8 @@ package io.github.hato1883.basemod.board;
 
 import io.github.hato1883.api.events.EventListener;
 import io.github.hato1883.api.events.board.PreBoardGenerationEvent;
-import io.github.hato1883.api.game.board.IBoard;
-import io.github.hato1883.core.game.board.BoardUtils;
+import io.github.hato1883.api.world.board.IBoard;
+import io.github.hato1883.core.game.world.board.BoardUtils;
 
 public class VanillaBoardEventHandler {
     @EventListener

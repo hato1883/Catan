@@ -9,7 +9,7 @@ public class GameGUI implements IUI {
     @Override
     public void create() {
         Lwjgl3ApplicationConfiguration config = getDefaultConfiguration();
-        new Lwjgl3Application(new Main(), config);
+        new Lwjgl3Application(new GameGUIMain(), config);
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

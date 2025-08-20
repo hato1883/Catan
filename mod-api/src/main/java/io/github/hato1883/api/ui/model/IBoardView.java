@@ -1,7 +1,7 @@
 package io.github.hato1883.api.ui.model;
 
-import io.github.hato1883.api.game.board.IHexTile;
-import io.github.hato1883.api.game.board.ITileType;
+import io.github.hato1883.api.world.board.IHexTile;
+import io.github.hato1883.api.world.board.ITileType;
 
 import java.util.Collection;
 import java.util.List;

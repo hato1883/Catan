@@ -3,9 +3,9 @@ package io.github.hato1883.api.events.player;
 import io.github.hato1883.api.events.EventPriority;
 import io.github.hato1883.api.events.IEventBus;
 import io.github.hato1883.api.events.IEventListener;
-import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.api.game.IPlayer;
-import io.github.hato1883.api.game.IResourceType;
+import io.github.hato1883.api.world.IGameState;
+import io.github.hato1883.api.entities.player.IPlayer;
+import io.github.hato1883.api.entities.resource.IResourceType;
 
 import java.util.Map;
 

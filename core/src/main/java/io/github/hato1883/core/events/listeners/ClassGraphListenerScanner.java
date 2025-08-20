@@ -3,10 +3,11 @@ package io.github.hato1883.core.events.listeners;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import io.github.hato1883.api.LogManager;
+import io.github.hato1883.api.ModLoading;
 import io.github.hato1883.api.events.IEventListenerRegistrar;
 import io.github.hato1883.api.mod.load.ILoadedMod;
 import io.github.hato1883.api.mod.load.IModListenerScanner;
-import io.github.hato1883.api.unknown.IAsyncExecutionService;
+import io.github.hato1883.api.async.IAsyncExecutionService;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class ClassGraphListenerScanner implements IModListenerScanner {
     }
 
     @Override
-    public void scanAndRegister(List<ILoadedMod> mods, IEventListenerRegistrar registrar) {
+    public void scanAndRegister(List<ILoadedMod> mods) {
         if (mods == null || mods.isEmpty()) return;
 
         List<Future<List<Class<?>>>> futures = new ArrayList<>();
@@ -46,7 +47,7 @@ public class ClassGraphListenerScanner implements IModListenerScanner {
                 for (Class<?> c : classes) {
                     try {
                         Object inst = c.getDeclaredConstructor().newInstance();
-                        registrar.register(mod.id(), inst);
+                        ModLoading.listenerRegistrar().register(mod.id(), inst);
                     } catch (Throwable t) {
                         LogManager.getLogger(mod.id()).error("Failed to instantiate listener {}", c.getName(), t);
                     }

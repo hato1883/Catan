@@ -11,7 +11,7 @@ import java.util.*;
 public class DependencyResolver implements IDependencyResolver {
 
     public Map<ModMetadata, Path> resolveLoadOrder(Map<ModMetadata, Path> mods) throws ModDependencyException {
-        Map<String, ModMetadata> modMap = new HashMap<>();
+        Map<String, ModMetadata> modMap = new HashMap<>(mods.size());
         for (ModMetadata mod : mods.keySet()) modMap.put(mod.id(), mod);
 
         Map<String, Set<String>> graph = new HashMap<>();
@@ -50,7 +50,8 @@ public class DependencyResolver implements IDependencyResolver {
 
         for (String id : inDegree.keySet()) if (inDegree.get(id) == 0) queue.add(modMap.get(id));
 
-        Map<ModMetadata, Path> loadOrder = new HashMap<>();
+        // TODO: Revaluate usage of map, maybe create a record to pack Path into ModMetadata.
+        Map<ModMetadata, Path> loadOrder = new LinkedHashMap<>(mods.size());
         while (!queue.isEmpty()) {
             ModMetadata modMetadata = queue.poll();
             loadOrder.put(modMetadata, mods.get(modMetadata));

@@ -1,6 +1,6 @@
 package io.github.hato1883.core.registries;
 
-import io.github.hato1883.core.modloading.LoadedMod;
+import io.github.hato1883.core.modloading.loading.LoadedMod;
 import io.github.hato1883.api.LogManager;
 
 import java.util.List;

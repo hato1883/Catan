@@ -7,7 +7,7 @@ import io.github.hato1883.api.events.registry.RegistryUnregisterEvent;
 import io.github.hato1883.api.events.registry.structure.road.RoadTypeRegisterEvent;
 import io.github.hato1883.api.events.registry.structure.road.RoadTypeReplaceEvent;
 import io.github.hato1883.api.events.registry.structure.road.RoadTypeUnregisterEvent;
-import io.github.hato1883.api.game.board.IRoadType;
+import io.github.hato1883.api.world.board.IRoadType;
 import io.github.hato1883.api.registries.IRoadTypeRegistry;
 
 public class RoadTypeRegistry extends Registry<IRoadType> implements IRoadTypeRegistry {

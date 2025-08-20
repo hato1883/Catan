@@ -3,8 +3,8 @@ package io.github.hato1883.api.events.player;
 import io.github.hato1883.api.events.EventPriority;
 import io.github.hato1883.api.events.IEventBus;
 import io.github.hato1883.api.events.IEventListener;
-import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.api.game.board.IBuilding;
+import io.github.hato1883.api.world.IGameState;
+import io.github.hato1883.api.world.board.IBuilding;
 
 /**
  * Event triggered when a player attempts to build a building.

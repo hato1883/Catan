@@ -7,7 +7,7 @@ import io.github.hato1883.api.events.registry.RegistryUnregisterEvent;
 import io.github.hato1883.api.events.registry.structure.port.PortTypeRegisterEvent;
 import io.github.hato1883.api.events.registry.structure.port.PortTypeReplaceEvent;
 import io.github.hato1883.api.events.registry.structure.port.PortTypeUnregisterEvent;
-import io.github.hato1883.api.game.board.IPortType;
+import io.github.hato1883.api.world.board.IPortType;
 import io.github.hato1883.api.registries.IPortTypeRegistry;
 
 public class PortTypeRegistry extends Registry<IPortType> implements IPortTypeRegistry {

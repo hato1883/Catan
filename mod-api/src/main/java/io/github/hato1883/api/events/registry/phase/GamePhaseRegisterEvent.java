@@ -2,7 +2,7 @@ package io.github.hato1883.api.events.registry.phase;
 
 import io.github.hato1883.api.Identifier;
 import io.github.hato1883.api.events.registry.RegistryRegisterEvent;
-import io.github.hato1883.api.game.IGamePhase;
+import io.github.hato1883.api.world.phase.IGamePhase;
 import io.github.hato1883.api.registries.IRegistry;
 
 public class GamePhaseRegisterEvent extends RegistryRegisterEvent<IGamePhase> {

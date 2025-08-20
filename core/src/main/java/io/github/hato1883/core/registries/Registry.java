@@ -13,7 +13,7 @@ abstract class Registry<T> implements IRegistry<T> {
     private final Map<Identifier, T> entries = new HashMap<>();
 
     @Override
-    public void register(Identifier id, T element) {
+    public T register(Identifier id, T element) {
         if (entries.containsKey(id)) {
             throw new IllegalArgumentException("ID already registered: " + id);
         }
@@ -21,13 +21,13 @@ abstract class Registry<T> implements IRegistry<T> {
         // Fire pre-register event
         RegistryRegisterEvent<T> event = createRegistryRegisterEvent(id, element);
         Events.post(event);
-        if (event.isCanceled()) return;
+        if (event.isCanceled()) return null;
 
         // Register element to id
         entries.put(id, element);
 
         // Fire post-register event (optional)
-
+        return element;
     }
 
     @Override

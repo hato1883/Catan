@@ -1,7 +1,7 @@
 package io.github.hato1883.api.events.board;
 
 import io.github.hato1883.api.events.GameplayEvent;
-import io.github.hato1883.api.game.IGameState;
+import io.github.hato1883.api.world.IGameState;
 
 /**
  * Represents a generic event related to the game board.

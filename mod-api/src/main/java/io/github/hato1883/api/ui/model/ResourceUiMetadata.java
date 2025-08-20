@@ -1,7 +1,7 @@
 package io.github.hato1883.api.ui.model;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import io.github.hato1883.api.game.IResourceType;
+import io.github.hato1883.api.entities.resource.IResourceType;
 
 import java.util.Locale;
 import java.util.Map;

@@ -1,17 +1,20 @@
 package io.github.hato1883.core.ui.tui;
 
 import io.github.hato1883.api.LogManager;
+import io.github.hato1883.api.Services;
 import io.github.hato1883.api.events.IEventListenerRegistrar;
-import io.github.hato1883.api.game.board.IBoard;
-import io.github.hato1883.api.service.IServiceLocator;
+import io.github.hato1883.api.services.IServiceContainer;
+import io.github.hato1883.api.world.board.IBoard;
+import io.github.hato1883.api.services.IServiceLocator;
 import io.github.hato1883.api.ui.IUI;
 import io.github.hato1883.api.ui.TUIScreen;
-import io.github.hato1883.core.modloading.ModLoader;
-import io.github.hato1883.core.service.ServiceBootstrap;
+import io.github.hato1883.core.bootstrap.services.FacadeBootstrap;
+import io.github.hato1883.core.modloading.loading.ModLoader;
+import io.github.hato1883.core.bootstrap.services.ServiceBootstrap;
 import io.github.hato1883.core.ui.tui.screen.BoardCreationTUIScreen;
 import io.github.hato1883.core.ui.tui.screen.GamePlayTUIScreen;
 import io.github.hato1883.core.ui.tui.screen.MainMenuTUIScreen;
-import io.github.hato1883.core.util.PathResolver;
+import io.github.hato1883.core.common.util.PathResolver;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -32,12 +35,15 @@ public class GameTUI implements IUI {
 
         LOGGER.info("Register default services...");
         ServiceBootstrap.initialize();
-        IServiceLocator provider = ServiceBootstrap.getProvider();
         LOGGER.info("Default services have been registered");
+
+        LOGGER.info("Setup Facades...");
+        FacadeBootstrap.initialize(ServiceBootstrap.getContainer());
+        LOGGER.info("Facades have been initialized");
 
         // Register default events
         LOGGER.info("Registering base game event Listeners...");
-        provider.requireService(IEventListenerRegistrar.class).registerListenersInPackage(
+        Services.require(IEventListenerRegistrar.class).registerListenersInPackage(
             LOGGER_ID,
             "io.github.hato1883.game.logic.listeners"
         );

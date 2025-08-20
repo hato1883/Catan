@@ -4,7 +4,6 @@ import io.github.hato1883.api.events.Cancelable;
 import io.github.hato1883.api.events.EventPriority;
 import io.github.hato1883.api.events.IEventBus;
 import io.github.hato1883.api.events.IEventListener;
-import io.github.hato1883.api.game.IGameState;
 
 /**
  * Fired when a UI component is closed by a player or the system.

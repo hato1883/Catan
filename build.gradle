@@ -10,7 +10,6 @@ buildscript {
   }
   dependencies {
 
-
   }
 }
 
@@ -38,6 +37,16 @@ configure(subprojects) {
 
   sourceCompatibility = JavaVersion.VERSION_21
   targetCompatibility = JavaVersion.VERSION_21
+
+  // Add test dependencies AFTER applying java-library plugin
+  dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  }
+
+  test {
+    useJUnitPlatform()
+  }
 
   tasks.withType(JavaCompile).configureEach {
     options.release.set(21)
@@ -81,6 +90,18 @@ subprojects {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://jitpack.io' }
+  }
+  // Main dependencies for all subprojects
+  dependencies {
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+  }
+  // Test dependencies for all subprojects
+  dependencies {
+    implementation("org.jetbrains:annotations:26.0.2")
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.mockito:mockito-core:5.2.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
   }
 }
 

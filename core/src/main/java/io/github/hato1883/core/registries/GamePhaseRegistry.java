@@ -7,7 +7,7 @@ import io.github.hato1883.api.events.registry.RegistryUnregisterEvent;
 import io.github.hato1883.api.events.registry.phase.GamePhaseRegisterEvent;
 import io.github.hato1883.api.events.registry.phase.GamePhaseReplaceEvent;
 import io.github.hato1883.api.events.registry.phase.GamePhaseUnregisterEvent;
-import io.github.hato1883.api.game.IGamePhase;
+import io.github.hato1883.api.world.phase.IGamePhase;
 import io.github.hato1883.api.registries.IGamePhaseRegistry;
 
 public class GamePhaseRegistry extends Registry<IGamePhase> implements IGamePhaseRegistry {

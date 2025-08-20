@@ -2,12 +2,12 @@ package io.github.hato1883.basemod.board;
 
 import io.github.hato1883.api.Identifier;
 import io.github.hato1883.api.Registries;
-import io.github.hato1883.api.game.board.*;
-import io.github.hato1883.core.game.board.SpiralUtils;
+import io.github.hato1883.api.world.board.*;
+import io.github.hato1883.core.game.world.board.SpiralUtils;
 
 import java.util.*;
 
-import static io.github.hato1883.basemod.Main.MOD_ID;
+import static io.github.hato1883.basemod.BaseModMain.MOD_ID;
 import static io.github.hato1883.basemod.board.ClassicHexIslandBoard.DEFAULT_NUMBERS;
 import static io.github.hato1883.basemod.board.ClassicHexIslandBoard.DEFAULT_TILE_IDS;
 

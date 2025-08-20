@@ -7,7 +7,7 @@ import io.github.hato1883.api.events.registry.RegistryUnregisterEvent;
 import io.github.hato1883.api.events.registry.structure.building.BuildingTypeRegisterEvent;
 import io.github.hato1883.api.events.registry.structure.building.BuildingTypeReplaceEvent;
 import io.github.hato1883.api.events.registry.structure.building.BuildingTypeUnregisterEvent;
-import io.github.hato1883.api.game.board.IBuildingType;
+import io.github.hato1883.api.world.board.IBuildingType;
 import io.github.hato1883.api.registries.IBuildingTypeRegistry;
 
 public class BuildingTypeRegistry extends Registry<IBuildingType> implements IBuildingTypeRegistry {

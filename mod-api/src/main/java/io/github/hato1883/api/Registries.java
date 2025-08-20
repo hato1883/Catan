@@ -1,67 +1,90 @@
 package io.github.hato1883.api;
 
-import io.github.hato1883.api.game.IGamePhase;
-import io.github.hato1883.api.game.IResourceType;
-import io.github.hato1883.api.game.board.*;
+import io.github.hato1883.api.world.phase.IGamePhase;
+import io.github.hato1883.api.entities.resource.IResourceType;
+import io.github.hato1883.api.world.board.*;
 import io.github.hato1883.api.registries.*;
-import io.github.hato1883.api.service.IServiceLocator;
+import io.github.hato1883.api.services.IServiceLocator;
 import org.jetbrains.annotations.NotNull;
 
 public final class Registries {
 
     private static IServiceLocator serviceProvider;
+    private static volatile ITileTypeRegistry tileRegistry;
+    private static volatile IBoardTypeRegistry boardRegistry;
+    private static volatile IResourceTypeRegistry resourceRegistry;
+    private static volatile IBuildingTypeRegistry buildingRegistry;
+    private static volatile IRoadTypeRegistry roadRegistry;
+    private static volatile IPortTypeRegistry portRegistry;
+    private static volatile IGamePhaseRegistry phaseRegistry;
 
-    public static ITileTypeRegistry tiles() { return getProvider().requireService(ITileTypeRegistry.class); }
-    public static IBoardTypeRegistry boards() { return getProvider().requireService(IBoardTypeRegistry.class); }
-    public static IResourceTypeRegistry resources() { return getProvider().requireService(IResourceTypeRegistry.class); }
-    public static IBuildingTypeRegistry buildings() { return getProvider().requireService(IBuildingTypeRegistry.class); }
-    public static IRoadTypeRegistry roads() { return getProvider().requireService(IRoadTypeRegistry.class); }
-    public static IPortTypeRegistry ports() { return getProvider().requireService(IPortTypeRegistry.class); }
-    public static IGamePhaseRegistry phases() { return getProvider().requireService(IGamePhaseRegistry.class); }
+    // Prevent instantiation
+    private Registries() {
+        throw new UnsupportedOperationException("Registries is a utility class");
+    }
+
+    public static ITileTypeRegistry tiles() {
+        if (tileRegistry == null) tileRegistry = getProvider().require(ITileTypeRegistry.class);
+        return tileRegistry;
+    }
+
+    public static IBoardTypeRegistry boards() {
+        if (boardRegistry == null) boardRegistry = getProvider().require(IBoardTypeRegistry.class);
+        return boardRegistry;
+    }
+
+    public static IResourceTypeRegistry resources() {
+        if (resourceRegistry == null) resourceRegistry = getProvider().require(IResourceTypeRegistry.class);
+        return resourceRegistry;
+    }
+
+    public static IBuildingTypeRegistry buildings() {
+        if (buildingRegistry == null) buildingRegistry = getProvider().require(IBuildingTypeRegistry.class);
+        return buildingRegistry;
+    }
+
+    public static IRoadTypeRegistry roads() {
+        if (roadRegistry == null) roadRegistry = getProvider().require(IRoadTypeRegistry.class);
+        return roadRegistry;
+    }
+
+    public static IPortTypeRegistry ports() {
+        if (portRegistry == null) portRegistry = getProvider().require(IPortTypeRegistry.class);
+        return portRegistry;
+    }
+
+    public static IGamePhaseRegistry phases() {
+        if (phaseRegistry == null) phaseRegistry = getProvider().require(IGamePhaseRegistry.class);
+        return phaseRegistry;
+    }
 
     // Convenience registration methods
-    public static void register(@NotNull ITileType tile) {
-        tiles().register(tile.getId(), tile);
+    public static ITileType register(@NotNull ITileType tile) {
+        return tiles().register(tile.getId(), tile);
     }
 
-    public static void register(@NotNull IBoardType board) {
-        boards().register(board.getIdentifier(), board);
+    public static IBoardType register(@NotNull IBoardType board) {
+        return boards().register(board.getIdentifier(), board);
     }
 
-    public static void register(@NotNull IResourceType resource) {
-        resources().register(resource.getId(), resource);
+    public static IResourceType register(@NotNull IResourceType resource) {
+        return resources().register(resource.getId(), resource);
     }
 
-    public static void register(@NotNull IBuildingType building) {
-        buildings().register(building.getId(), building);
+    public static IBuildingType register(@NotNull IBuildingType building) {
+        return buildings().register(building.getId(), building);
     }
 
-    public static void register(@NotNull IRoadType road) {
-        roads().register(road.getId(), road);
+    public static IRoadType register(@NotNull IRoadType road) {
+        return roads().register(road.getId(), road);
     }
 
-    public static void register(@NotNull IPortType port) {
-        ports().register(port.getId(), port);
+    public static IPortType register(@NotNull IPortType port) {
+        return ports().register(port.getId(), port);
     }
 
-    public static void register(@NotNull IGamePhase building) {
-        phases().register(building.getId(), building);
-    }
-
-    // Generic registration
-    public static <T> void register(@NotNull T item) {
-        switch (item) {
-            case ITileType tileType -> register(tileType);
-            case IBoardType boardType -> register(boardType);
-            case IResourceType resourceType -> register(resourceType);
-            case IBuildingType buildingType -> register(buildingType);
-            case IRoadType roadType -> register(roadType);
-            case IPortType portType -> register(portType);
-            case IGamePhase gamePhase -> register(gamePhase);
-            case null, default -> {
-                throw new IllegalArgumentException("Unsupported registration type: " + item.getClass());
-            }
-        }
+    public static IGamePhase register(@NotNull IGamePhase building) {
+        return phases().register(building.getId(), building);
     }
 
     public static void initialize(@NotNull IServiceLocator provider) {

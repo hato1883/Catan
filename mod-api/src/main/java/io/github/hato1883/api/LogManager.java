@@ -9,8 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class LogManager {
     private static final Map<String, Logger> modLoggers = new ConcurrentHashMap<>();
 
+    // Prevent instantiation
     private LogManager() {
-        // Utility class, prevent instantiation
+        throw new UnsupportedOperationException("LogManager is a utility class");
     }
 
     /**

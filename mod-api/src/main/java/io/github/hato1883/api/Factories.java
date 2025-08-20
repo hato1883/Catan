@@ -2,9 +2,9 @@ package io.github.hato1883.api;
 
 import io.github.hato1883.api.factories.IResourceTypeFactory;
 import io.github.hato1883.api.factories.ITileTypeFactory;
-import io.github.hato1883.api.game.IResourceType;
-import io.github.hato1883.api.game.board.*;
-import io.github.hato1883.api.service.IServiceLocator;
+import io.github.hato1883.api.entities.resource.IResourceType;
+import io.github.hato1883.api.world.board.*;
+import io.github.hato1883.api.services.IServiceLocator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -13,8 +13,13 @@ public class Factories {
 
     private static IServiceLocator serviceProvider;
 
-    public static ITileTypeFactory tile() { return getProvider().requireService(ITileTypeFactory.class); }
-    public static IResourceTypeFactory resource() { return getProvider().requireService(IResourceTypeFactory.class); }
+    // Prevent instantiation
+    private Factories() {
+        throw new UnsupportedOperationException("Factories is a utility class");
+    }
+
+    public static ITileTypeFactory tile() { return getProvider().require(ITileTypeFactory.class); }
+    public static IResourceTypeFactory resource() { return getProvider().require(IResourceTypeFactory.class); }
     /*
      * Future factories that we need to expose for our modders.
     public static IBuildingTypeFactory building() { return getProvider().requireService(IBuildingTypeFactory.class); }

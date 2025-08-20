@@ -1,8 +1,8 @@
 package io.github.hato1883.api.events.phase;
 
 import io.github.hato1883.api.events.GameplayEvent;
-import io.github.hato1883.api.game.IGamePhase;
-import io.github.hato1883.api.game.IGameState;
+import io.github.hato1883.api.world.phase.IGamePhase;
+import io.github.hato1883.api.world.IGameState;
 
 /**
  * Base event class for game phase-related events.

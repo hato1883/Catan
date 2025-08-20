@@ -1,8 +1,8 @@
 package io.github.hato1883.api.mod;
 
-import io.github.hato1883.api.game.IGamePhase;
-import io.github.hato1883.api.game.IResourceType;
-import io.github.hato1883.api.game.board.*;
+import io.github.hato1883.api.world.phase.IGamePhase;
+import io.github.hato1883.api.entities.resource.IResourceType;
+import io.github.hato1883.api.world.board.*;
 
 public interface IModRegistrar {
     void registerGamePhase(IGamePhase gamePhase);

@@ -1,7 +1,7 @@
 package io.github.hato1883.api.events.lifecycle;
 
 import io.github.hato1883.api.events.IEvent;
-import io.github.hato1883.api.game.IGameState;
+import io.github.hato1883.api.world.IGameState;
 
 import java.util.Optional;
 

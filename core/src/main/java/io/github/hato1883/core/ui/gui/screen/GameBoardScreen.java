@@ -3,9 +3,9 @@ package io.github.hato1883.core.ui.gui.screen;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import io.github.hato1883.core.assets.RenderAssetLoader;
-import io.github.hato1883.core.ui.gui.render.BoardRenderer;
-import io.github.hato1883.core.ui.gui.camera.CameraController;
+import io.github.hato1883.core.assets.management.loaders.RenderAssetLoader;
+import io.github.hato1883.core.ui.gui.rendering.BoardRenderer;
+import io.github.hato1883.core.ui.gui.controls.camera.CameraController;
 
 /**
  * Application layer: coordinates screen lifecycle and delegates to collaborators.

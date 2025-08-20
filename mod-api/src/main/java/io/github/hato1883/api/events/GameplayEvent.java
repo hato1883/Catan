@@ -1,6 +1,6 @@
 package io.github.hato1883.api.events;
 
-import io.github.hato1883.api.game.IGameState;
+import io.github.hato1883.api.world.IGameState;
 
 /**
  * Root event for all Gameplay related events such as:

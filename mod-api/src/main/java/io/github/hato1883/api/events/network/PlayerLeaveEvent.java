@@ -3,7 +3,7 @@ package io.github.hato1883.api.events.network;
 import io.github.hato1883.api.events.EventPriority;
 import io.github.hato1883.api.events.IEventBus;
 import io.github.hato1883.api.events.IEventListener;
-import io.github.hato1883.api.game.IPlayer;
+import io.github.hato1883.api.entities.player.IPlayer;
 import io.github.hato1883.api.events.player.PlayerEvent;
 
 /**

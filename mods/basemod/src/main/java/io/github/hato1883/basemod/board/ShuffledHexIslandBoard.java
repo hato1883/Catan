@@ -1,9 +1,9 @@
 package io.github.hato1883.basemod.board;
 
 import io.github.hato1883.api.Identifier;
-import io.github.hato1883.api.game.board.*;
+import io.github.hato1883.api.world.board.*;
 
-import static io.github.hato1883.basemod.Main.MOD_ID;
+import static io.github.hato1883.basemod.BaseModMain.MOD_ID;
 
 public class ShuffledHexIslandBoard extends ClassicHexIslandBoard {
 

@@ -7,7 +7,7 @@ import io.github.hato1883.api.events.registry.RegistryUnregisterEvent;
 import io.github.hato1883.api.events.registry.board.BoardTypeRegisterEvent;
 import io.github.hato1883.api.events.registry.board.BoardTypeReplaceEvent;
 import io.github.hato1883.api.events.registry.board.BoardTypeUnregisterEvent;
-import io.github.hato1883.api.game.board.IBoardType;
+import io.github.hato1883.api.world.board.IBoardType;
 import io.github.hato1883.api.registries.IBoardTypeRegistry;
 
 public class BoardTypeRegistry extends Registry<IBoardType> implements IBoardTypeRegistry {

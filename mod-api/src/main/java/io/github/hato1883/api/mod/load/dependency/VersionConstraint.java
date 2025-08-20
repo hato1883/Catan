@@ -44,6 +44,20 @@ public interface VersionConstraint {
 
         constraint = constraint.trim();
 
+        // Support for >, >=, <, <= operators with proper open-ended range support
+        if (constraint.startsWith(">=")) {
+            return range(constraint.substring(2).trim(), null, true, false); // [min,)
+        }
+        if (constraint.startsWith(">")) {
+            return range(constraint.substring(1).trim(), null, false, false); // (min,)
+        }
+        if (constraint.startsWith("<=")) {
+            return range(null, constraint.substring(2).trim(), false, true); // (,max]
+        }
+        if (constraint.startsWith("<")) {
+            return range(null, constraint.substring(1).trim(), false, false); // (,max)
+        }
+
         // Tilde version: ~1.2.3 (allows patch-level changes)
         if (constraint.startsWith("~")) {
             return tilde(constraint.substring(1));
@@ -189,32 +203,30 @@ public interface VersionConstraint {
         implements VersionConstraint {
 
         public RangeVersion {
-            if (minVersion == null || minVersion.isBlank()) {
-                throw new IllegalArgumentException("Min version cannot be null or blank");
-            }
-            if (maxVersion == null || maxVersion.isBlank()) {
-                throw new IllegalArgumentException("Max version cannot be null or blank");
-            }
+            // Allow null for open-ended bounds
         }
 
         @Override
         public boolean matches(String version) {
             SemanticVersion candidate = SemanticVersion.parse(version);
-            SemanticVersion min = SemanticVersion.parse(minVersion);
-            SemanticVersion max = SemanticVersion.parse(maxVersion);
-
-            int minComparison = candidate.compareTo(min);
-            int maxComparison = candidate.compareTo(max);
-
-            boolean satisfiesMin = minInclusive ? minComparison >= 0 : minComparison > 0;
-            boolean satisfiesMax = maxInclusive ? maxComparison <= 0 : maxComparison < 0;
-
+            boolean satisfiesMin = true;
+            boolean satisfiesMax = true;
+            if (minVersion != null && !minVersion.isBlank()) {
+                SemanticVersion min = SemanticVersion.parse(minVersion);
+                int minComparison = candidate.compareTo(min);
+                satisfiesMin = minInclusive ? minComparison >= 0 : minComparison > 0;
+            }
+            if (maxVersion != null && !maxVersion.isBlank()) {
+                SemanticVersion max = SemanticVersion.parse(maxVersion);
+                int maxComparison = candidate.compareTo(max);
+                satisfiesMax = maxInclusive ? maxComparison <= 0 : maxComparison < 0;
+            }
             return satisfiesMin && satisfiesMax;
         }
 
         @Override
         public @NotNull String toString() {
-            return (minInclusive ? "[" : "(") + minVersion + "," + maxVersion + (maxInclusive ? "]" : ")");
+            return (minInclusive ? "[" : "(") + (minVersion != null ? minVersion : "") + "," + (maxVersion != null ? maxVersion : "") + (maxInclusive ? "]" : ")");
         }
     }
 }

@@ -1,9 +1,9 @@
 package io.github.hato1883.core.ui.tui.screen;
 
 import io.github.hato1883.api.Identifier;
-import io.github.hato1883.api.ModServices;
-import io.github.hato1883.api.game.board.IBoard;
-import io.github.hato1883.api.game.board.IBoardGenerator;
+import io.github.hato1883.api.Services;
+import io.github.hato1883.api.world.board.IBoard;
+import io.github.hato1883.api.world.board.IBoardGenerator;
 import io.github.hato1883.core.ui.tui.TUIInput;
 
 public class BoardCreationTUIScreen extends BaseTUIScreen {
@@ -28,13 +28,13 @@ public class BoardCreationTUIScreen extends BaseTUIScreen {
                 switch (input) {
                     case "1":
                         selectedOption = "basemod:classic_hex";
-                        boardGenerator = ModServices.requireService(IBoardGenerator.class);
+                        boardGenerator = Services.require(IBoardGenerator.class);
                         board = boardGenerator.generateBoard(Identifier.of(selectedOption), null); // your board creation logic
                         finished = true;
                         break;
                     case "2":
                         selectedOption = "basemod:donut";
-                        boardGenerator = ModServices.requireService(IBoardGenerator.class);
+                        boardGenerator = Services.require(IBoardGenerator.class);
                         board = boardGenerator.generateBoard(Identifier.of(selectedOption), null);
                         finished = true;
                         break;

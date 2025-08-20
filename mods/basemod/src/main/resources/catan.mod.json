@@ -5,6 +5,6 @@
   "version": "1.0.0",
   "description": "Adds the default catan game",
   "loadPriority": "NORMAL",
-  "entrypoint": "io.github.hato1883.basemod.Main",
+  "entrypoint": "io.github.hato1883.basemod.BaseModMain",
   "dependencies": []
 }

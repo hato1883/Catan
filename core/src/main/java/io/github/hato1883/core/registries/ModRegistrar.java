@@ -1,9 +1,9 @@
 package io.github.hato1883.core.registries;
 
 import io.github.hato1883.api.Registries;
-import io.github.hato1883.api.game.IGamePhase;
-import io.github.hato1883.api.game.IResourceType;
-import io.github.hato1883.api.game.board.*;
+import io.github.hato1883.api.world.phase.IGamePhase;
+import io.github.hato1883.api.entities.resource.IResourceType;
+import io.github.hato1883.api.world.board.*;
 import io.github.hato1883.api.mod.IModRegistrar;
 
 public class ModRegistrar implements IModRegistrar {

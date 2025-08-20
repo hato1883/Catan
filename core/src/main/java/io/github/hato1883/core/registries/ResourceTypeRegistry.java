@@ -7,8 +7,8 @@ import io.github.hato1883.api.events.registry.RegistryUnregisterEvent;
 import io.github.hato1883.api.events.registry.resource.ResourceTypeRegisterEvent;
 import io.github.hato1883.api.events.registry.resource.ResourceTypeReplaceEvent;
 import io.github.hato1883.api.events.registry.resource.ResourceTypeUnregisterEvent;
-import io.github.hato1883.api.game.IResourceType;
-import io.github.hato1883.api.game.board.ITileType;
+import io.github.hato1883.api.entities.resource.IResourceType;
+import io.github.hato1883.api.world.board.ITileType;
 import io.github.hato1883.api.registries.IResourceTypeRegistry;
 
 import java.util.HashSet;

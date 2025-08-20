@@ -3,9 +3,9 @@ package io.github.hato1883.api.events.player;
 import io.github.hato1883.api.events.EventPriority;
 import io.github.hato1883.api.events.IEventBus;
 import io.github.hato1883.api.events.IEventListener;
-import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.api.game.IPlayer;
-import io.github.hato1883.api.game.board.IHexTile;
+import io.github.hato1883.api.world.IGameState;
+import io.github.hato1883.api.entities.player.IPlayer;
+import io.github.hato1883.api.world.board.IHexTile;
 
 /**
  * Event fired when a player moves the robber.

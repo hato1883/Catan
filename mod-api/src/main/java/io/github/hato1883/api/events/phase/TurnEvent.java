@@ -1,7 +1,7 @@
 package io.github.hato1883.api.events.phase;
 
 import io.github.hato1883.api.events.GameplayEvent;
-import io.github.hato1883.api.game.IGameState;
+import io.github.hato1883.api.world.IGameState;
 
 /**
  * Base class for turn-related events.

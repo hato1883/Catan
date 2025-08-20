@@ -4,7 +4,7 @@ import io.github.hato1883.api.events.Cancelable;
 import io.github.hato1883.api.events.EventPriority;
 import io.github.hato1883.api.events.IEventBus;
 import io.github.hato1883.api.events.IEventListener;
-import io.github.hato1883.api.game.IGameState;
+import io.github.hato1883.api.world.IGameState;
 
 /**
  * Event fired at the start of a player's turn.

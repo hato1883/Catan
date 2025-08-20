@@ -1,7 +1,7 @@
 package io.github.hato1883.api.events.player;
 
-import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.api.game.IPlayer;
+import io.github.hato1883.api.world.IGameState;
+import io.github.hato1883.api.entities.player.IPlayer;
 
 /**
  * Base class for all combat-related events.

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <conversionRule conversionWord="ccond" converterClass="io.github.hato1883.core.util.ConditionalLoggerConverter"/>
-    <conversionRule conversionWord="alignedmsg" converterClass="io.github.hato1883.core.util.AlignedMessageConverter"/>
+    <conversionRule conversionWord="ccond" converterClass="io.github.hato1883.core.common.util.ConditionalLoggerConverter"/>
+    <conversionRule conversionWord="alignedmsg" converterClass="io.github.hato1883.core.common.util.AlignedMessageConverter"/>
 
     <!-- Console appender for colorful output -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

@@ -3,10 +3,10 @@ package io.github.hato1883.basemod.board;
 import io.github.hato1883.api.Factories;
 import io.github.hato1883.api.Identifier;
 import io.github.hato1883.api.Registries;
-import io.github.hato1883.api.game.IResourceType;
+import io.github.hato1883.api.entities.resource.IResourceType;
 
 import static io.github.hato1883.api.LogManager.getLogger;
-import static io.github.hato1883.basemod.Main.MOD_ID;
+import static io.github.hato1883.basemod.BaseModMain.MOD_ID;
 
 public class BaseCatanResources {
 

@@ -8,7 +8,7 @@ public class MainMenuTUIScreen  extends BaseTUIScreen {
 
     @Override
     public void onShow() {
-        System.out.println("=== Main Menu ===");
+        System.out.println("=== GameGUIMain Menu ===");
         System.out.println("1) Start Game");
         System.out.println("2) Load Game");
         System.out.println("3) Exit");

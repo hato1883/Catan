@@ -1,8 +1,8 @@
 package io.github.hato1883.api.events.board;
 
 import io.github.hato1883.api.events.Cancelable;
-import io.github.hato1883.api.game.IGameState;
-import io.github.hato1883.api.game.board.IStructure;
+import io.github.hato1883.api.world.IGameState;
+import io.github.hato1883.api.world.board.IStructure;
 
 /**
  * Represents a generic structure connection event.

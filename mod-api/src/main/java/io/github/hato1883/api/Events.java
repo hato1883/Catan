@@ -1,7 +1,7 @@
 package io.github.hato1883.api;
 
 import io.github.hato1883.api.events.*;
-import io.github.hato1883.api.service.IServiceLocator;
+import io.github.hato1883.api.services.IServiceLocator;
 import org.jetbrains.annotations.NotNull;
 
 // TODO: Implement remaining methods:
@@ -10,6 +10,11 @@ import org.jetbrains.annotations.NotNull;
 public final class Events {
 
     private static IServiceLocator serviceProvider;
+
+    // Prevent instantiation
+    private Events() {
+        throw new UnsupportedOperationException("Events is a utility class");
+    }
 
     /**
      * Dispatches a custom event to all registered listeners.
@@ -57,8 +62,8 @@ public final class Events {
         return getEventBus();
     }
 
-    private static IEventBusService getEventBus() { return  getProvider().requireService(IEventBusService.class); }
-    private static IEventListenerRegistrar getEventListenerRegistrar() { return  getProvider().requireService(IEventListenerRegistrar.class); }
+    private static IEventBusService getEventBus() { return  getProvider().require(IEventBusService.class); }
+    private static IEventListenerRegistrar getEventListenerRegistrar() { return  getProvider().require(IEventListenerRegistrar.class); }
 
     public static void initialize(@NotNull IServiceLocator provider) {
         if (serviceProvider != null) {

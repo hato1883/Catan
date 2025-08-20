@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.PolygonSprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.EarClippingTriangulator;
-import io.github.hato1883.api.game.board.IHexTile;
+import io.github.hato1883.api.world.board.IHexTile;
 
 /**
  * A specialized {@link PolygonSprite} that renders hexagonal game tiles.
