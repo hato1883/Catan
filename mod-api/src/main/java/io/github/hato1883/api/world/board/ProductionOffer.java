@@ -4,9 +4,9 @@ import io.github.hato1883.api.entities.resource.IResourceType;
 
 import java.util.Map;
 
-public record ProductionOffer(IHexTile sourceTile, ITileType tileType, int rolledNumber,
+public record ProductionOffer(ITile sourceTile, ITileType tileType, int rolledNumber,
                               Map<IResourceType, Integer> baseProduction, boolean isBlocked) {
-    public ProductionOffer(IHexTile sourceTile, ITileType tileType, int rolledNumber,
+    public ProductionOffer(ITile sourceTile, ITileType tileType, int rolledNumber,
                            Map<IResourceType, Integer> baseProduction, boolean isBlocked) {
         this.sourceTile = sourceTile;
         this.tileType = tileType;

@@ -2,8 +2,8 @@ package io.github.hato1883.core.factories.sprites;
 
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import io.github.hato1883.api.world.board.ICubeCoord;
-import io.github.hato1883.api.world.board.IHexTile;
+import io.github.hato1883.api.world.board.ITile;
+import io.github.hato1883.api.world.board.ITilePosition;
 import io.github.hato1883.core.assets.management.textures.TileTextureProvider;
 import io.github.hato1883.core.ui.gui.sprites.HexagonSprite;
 
@@ -33,22 +33,15 @@ public class ReactiveHexagonSpriteFactory {
      * and the sprite will automatically update when the higher-resolution
      * texture becomes available.
      */
-    public HexagonSprite create(IHexTile tile, int lod) {
+    public HexagonSprite create(ITile tile, int lod) {
         // Try to get primary texture
-        TextureRegion region = textureProvider.getTileTexture(lod, tile.getTileType().getId());
+        TextureRegion region = textureProvider.getTileTexture(lod, tile.getType().getId());
 
         // Create sprite using base factory
         HexagonSprite sprite = baseFactory.create(tile, region);
         final float tileRadius = baseFactory.getTileRadius();
         final float tileGap = baseFactory.getTileGap();
-        final ICubeCoord coord = tile.getCoord();
-//        textureProvider.requestTexture(lod, tile.getTileType().getId(), new Consumer<TextureRegion>() {
-//            @Override
-//            public void accept(TextureRegion region) {
-//                sprite.getRegion().getRegion().setRegion(region);
-//                sprite.setScale(tileRadius * 2f / region.getRegionWidth());
-//            }
-//        });
+        final ITilePosition coord = tile.getPosition();
 
         // Position the sprite in world coordinates
         float width = (float) (Math.sqrt(3) * tileRadius);
@@ -65,5 +58,3 @@ public class ReactiveHexagonSpriteFactory {
         return sprite;
     }
 }
-
-

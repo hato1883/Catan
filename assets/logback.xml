@@ -28,5 +28,6 @@
 
     <!-- Fine tune specific loggers, e.g. your mod loader -->
     <logger name="io.github.hato1883.loader" level="DEBUG" />
+    <logger name="TileTextures" level="DEBUG"/>
 
 </configuration>

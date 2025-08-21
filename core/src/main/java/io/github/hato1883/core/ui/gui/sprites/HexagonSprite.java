@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.PolygonSprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.EarClippingTriangulator;
-import io.github.hato1883.api.world.board.IHexTile;
+import io.github.hato1883.api.world.board.ITile;
 
 /**
  * A specialized {@link PolygonSprite} that renders hexagonal game tiles.
@@ -34,7 +34,7 @@ import io.github.hato1883.api.world.board.IHexTile;
 public class HexagonSprite extends PolygonSprite {
     // FIXME: Consider making triangulator instance non-static if threading issues arise
     private static final EarClippingTriangulator triangulator = new EarClippingTriangulator();
-    private final IHexTile tile;
+    private final ITile tile;
 
     /**
      * Creates a new hexagonal sprite with specified texture and size.
@@ -53,7 +53,7 @@ public class HexagonSprite extends PolygonSprite {
      * <h3>Performance Note:</h3>
      * // TODO: Cache common radius geometries to avoid recomputation
      */
-    public HexagonSprite(TextureRegion baseRegion, float radius, IHexTile tile) {
+    public HexagonSprite(TextureRegion baseRegion, float radius, ITile tile) {
         super(buildHexagonRegion(baseRegion, radius));
         setOrigin(getWidth() / 2f, getHeight() / 2f);
         this.tile = tile;
@@ -101,7 +101,7 @@ public class HexagonSprite extends PolygonSprite {
         return new PolygonRegion(texture, vertices, triangles);
     }
 
-    public IHexTile getTile() {
+    public ITile getTile() {
         return tile;
     }
 

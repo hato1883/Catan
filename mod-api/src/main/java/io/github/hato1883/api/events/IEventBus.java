@@ -14,4 +14,7 @@ public interface IEventBus {
 
     // Dispatch event to all registered listeners for that event class
     <T extends IEvent> void dispatchAsync(T event);
+
+    // Dispatch event to all registered listeners for that event class on the main thread
+    <T extends IEvent> void dispatchOnMainThread(T event);
 }

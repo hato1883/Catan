@@ -9,15 +9,18 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import io.github.hato1883.api.LogManager;
+import io.github.hato1883.api.assets.TextureUpgradeNotifier;
+import io.github.hato1883.api.mod.load.asset.AssetCategory;
 import io.github.hato1883.core.assets.management.textures.LodAwareTileTextureProvider;
 import io.github.hato1883.core.assets.management.textures.TileTextureProvider;
-import io.github.hato1883.api.mod.load.asset.AssetCategory;
 import io.github.hato1883.core.common.util.PathResolver;
 import org.slf4j.Logger;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import static io.github.hato1883.core.common.util.DelayedFormatter.format;
 
@@ -45,6 +48,8 @@ public final class DefaultRenderAssetLoader implements RenderAssetLoader {
     private BitmapFont numberFont;
     private TileTextureProvider textureProvider;
 
+    private final Set<String> pendingLodAtlases = new HashSet<>();
+
     public DefaultRenderAssetLoader(String fontPath) {
         this.fontPath = fontPath; // e.g. "fonts/Roboto-Regular.ttf"
     }
@@ -67,20 +72,16 @@ public final class DefaultRenderAssetLoader implements RenderAssetLoader {
 
     @Override
     public void queueAssets() {
-        // Iterate trough lod -> categories, this will result in all atlases with low resolution images getting loaded first.
-        // which is good as it minimizes time needed before we can display something.
-        // Iterate through all lods, starting with lod of lowest resolution
         for (String lod : LODS) {
-            // For each lod load all different categories
             for (AssetCategory cat : AssetCategory.values()) {
                 Path path = PathResolver.getGameDataDir().resolve(TEXTURE_ASSET_ROOT).resolve(cat.getCategory()).resolve(lod).resolve(String.format("combined_%s_%s.atlas", cat.getCategory(), lod));
-                if (Files.exists(path))
+                if (Files.exists(path)) {
                     assetManager.load(path.toString(), TextureAtlas.class);
+                    pendingLodAtlases.add(path.toString());
+                }
             }
         }
         numberFont = createBaseTokenFont(fontPath);
-
-        // create provider once
         textureProvider = new LodAwareTileTextureProvider(
             assetManager,
             PathResolver.getGameDataDir().resolve(TEXTURE_ASSET_ROOT)
@@ -90,6 +91,20 @@ public final class DefaultRenderAssetLoader implements RenderAssetLoader {
     @Override
     public boolean update() {
         boolean done = assetManager.update();
+        // Check for newly loaded LOD atlases and notify provider
+        java.util.Iterator<String> it = pendingLodAtlases.iterator();
+        while (it.hasNext()) {
+            String atlasPath = it.next();
+            if (assetManager.isLoaded(atlasPath, TextureAtlas.class)) {
+                // Extract LOD from path string (e.g., .../lod2/combined_tile_lod2.atlas)
+                String lodStr = atlasPath.contains("lod0") ? "lod0" : atlasPath.contains("lod1") ? "lod1" : atlasPath.contains("lod2") ? "lod2" : "lod3";
+                int lod = lodStr.equals("lod0") ? 0 : lodStr.equals("lod1") ? 1 : lodStr.equals("lod2") ? 2 : 3;
+                if (textureProvider instanceof io.github.hato1883.core.assets.management.textures.LodAwareTileTextureProvider lodProvider) {
+                    lodProvider.onLodAtlasLoaded(lod);
+                }
+                it.remove();
+            }
+        }
         if (done && numberFont == null) {
             numberFont = createBaseTokenFont(fontPath);
         }
@@ -114,5 +129,10 @@ public final class DefaultRenderAssetLoader implements RenderAssetLoader {
     public void dispose() {
         assetManager.dispose();
         if (numberFont != null) numberFont.dispose();
+    }
+
+    @Override
+    public TextureUpgradeNotifier getTextureUpgradeNotifier() {
+        return (TextureUpgradeNotifier) textureProvider;
     }
 }

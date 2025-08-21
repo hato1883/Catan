@@ -36,7 +36,6 @@ public class ModTextureModAssetLoader implements IModAssetLoader {
         Map<AssetCategory, Map<Integer, List<AtlasBuildResult>>> combinedGroups = new HashMap<>();
 
         var discovered = discovery.discover(mods); // now Map<ILoadedMod, DiscoveredModTextures>
-        LOGGER.info("Loading assets for: {}", discovered.keySet());
 
         for (var modEntry : discovered.entrySet()) {
             ILoadedMod mod = modEntry.getKey();

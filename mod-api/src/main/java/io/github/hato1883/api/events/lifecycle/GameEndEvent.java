@@ -22,7 +22,7 @@ import io.github.hato1883.api.world.IGameState;
  * <h3>See Also:</h3>
  * <ul>
  *   <li>{@link GameLifecycleEvent}</li>
- *   <li>{@link GameStartEvent}</li>
+ *   <li>{@link io.github.hato1883.api.events.lifecycle.GameStartEvent}</li>
  *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li>
  * </ul>
  */

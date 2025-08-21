@@ -25,16 +25,21 @@ public interface IBoardType {
      */
     BoardGenerationConfig getDefaultConfig();
 
-    default List<ICubeCoord> getCubeOrder(Set<ICubeCoord> coords, BoardGenerationConfig config, Random rng) {
+    /**
+     * Returns the grid implementation for this board type (e.g. HexGrid, SquareGrid)
+     */
+    ITileGrid getGrid();
+
+    default List<ITilePosition> getTileOrder(Set<ITilePosition> coords, BoardGenerationConfig config, Random rng) {
         return List.copyOf(coords); // Ordering does not matter just take all cords and put them in a list.
     }
 
     // Optional hooks for tile selection
-    default Optional<ITileType> chooseTile(ICubeCoord coord, BoardGenerationConfig config, Random rng) {
+    default Optional<ITileType> chooseTile(ITilePosition position, BoardGenerationConfig config, Random rng) {
         return Optional.empty();
     }
 
-    default Optional<Collection<Integer>> assignNumbers(ICubeCoord coord, BoardGenerationConfig config, Random rng) {
+    default Optional<Collection<Integer>> assignNumbers(ITilePosition position, BoardGenerationConfig config, Random rng) {
         return Optional.empty();
     }
 }

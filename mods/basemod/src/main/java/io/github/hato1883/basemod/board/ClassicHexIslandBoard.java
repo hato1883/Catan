@@ -3,8 +3,6 @@ package io.github.hato1883.basemod.board;
 import io.github.hato1883.api.Identifier;
 import io.github.hato1883.api.Registries;
 import io.github.hato1883.api.world.board.*;
-import io.github.hato1883.core.game.world.board.HexIslandShape;
-import io.github.hato1883.core.game.world.board.SpiralUtils;
 
 import java.util.*;
 
@@ -63,7 +61,7 @@ public class ClassicHexIslandBoard implements IBoardType {
 
     @Override
     public IShapeGenerator getShapeGenerator() {
-        return new HexIslandShape();
+        return new ClassicHexShapeGenerator();
     }
 
     @Override
@@ -73,12 +71,17 @@ public class ClassicHexIslandBoard implements IBoardType {
     }
 
     @Override
-    public List<ICubeCoord> getCubeOrder(Set<ICubeCoord> coords, BoardGenerationConfig config, Random rng) {
-        return SpiralUtils.spiralOrder(coords, config.shouldShuffleTiles() ? rng : null); // default ordering
+    public List<ITilePosition> getTileOrder(Set<ITilePosition> coords, BoardGenerationConfig config, Random rng) {
+        return coords.stream()
+            .sorted(Comparator.comparingInt((tile) -> (int)((ITilePosition) tile).z())
+                .thenComparing((tile) -> (int)((ITilePosition) tile).x())
+                .thenComparing((tile) -> (int)((ITilePosition) tile).y()))
+            .toList();
+        //return SpiralUtils.spiralOrder(coords, config.shouldShuffleTiles() ? rng : null); // default ordering
     }
 
     @Override
-    public Optional<ITileType> chooseTile(ICubeCoord coord, BoardGenerationConfig config, Random rng) {
+    public Optional<ITileType> chooseTile(ITilePosition position, BoardGenerationConfig config, Random rng) {
         if (tilesLeftToPlace.isEmpty())
             tilesLeftToPlace.addAll(DEFAULT_TILE_IDS);
         Identifier tileId = tilesLeftToPlace.removeFirst();
@@ -86,12 +89,17 @@ public class ClassicHexIslandBoard implements IBoardType {
     }
 
     @Override
-    public Optional<Collection<Integer>> assignNumbers(ICubeCoord coord, BoardGenerationConfig config, Random rng) {
+    public Optional<Collection<Integer>> assignNumbers(ITilePosition position, BoardGenerationConfig config, Random rng) {
         if (tokensLeftToPlace.isEmpty())
             tokensLeftToPlace.addAll(DEFAULT_NUMBERS);
-        Collection<Integer> tokens = new ArrayList<Integer>();
+        Collection<Integer> tokens = new ArrayList<>();
         tokens.add(tokensLeftToPlace.removeFirst());
         return Optional.of(tokens);
+    }
+
+    @Override
+    public ITileGrid getGrid() {
+        return new HexGrid();
     }
 
 // Registration

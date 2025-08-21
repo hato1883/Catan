@@ -1,8 +1,8 @@
 package io.github.hato1883.core.factories.sprites;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import io.github.hato1883.api.world.board.ICubeCoord;
-import io.github.hato1883.api.world.board.IHexTile;
+import io.github.hato1883.api.world.board.ITile;
+import io.github.hato1883.api.world.board.ITilePosition;
 import io.github.hato1883.core.ui.gui.sprites.HexagonSprite;
 
 public final class HexagonSpriteFactory {
@@ -14,8 +14,8 @@ public final class HexagonSpriteFactory {
         this.tileGap = tileGap;
     }
 
-    public HexagonSprite create(IHexTile tile, TextureRegion texture) {
-        ICubeCoord coord = tile.getCoord();
+    public HexagonSprite create(ITile tile, TextureRegion texture) {
+        ITilePosition coord = tile.getPosition();
 
         HexagonSprite sprite = new HexagonSprite(texture, texture.getRegionWidth() / 2f, tile);
         sprite.setScale(tileRadius * 2f / texture.getRegionWidth());

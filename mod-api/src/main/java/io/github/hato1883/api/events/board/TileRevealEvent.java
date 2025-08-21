@@ -5,7 +5,8 @@ import io.github.hato1883.api.events.EventPriority;
 import io.github.hato1883.api.events.IEventBus;
 import io.github.hato1883.api.events.IEventListener;
 import io.github.hato1883.api.world.IGameState;
-import io.github.hato1883.api.world.board.IHexTile;
+import io.github.hato1883.api.world.board.ITile;
+import io.github.hato1883.api.world.board.TilePosition;
 
 /**
  * Fired when a hex tile is revealed to players, usually due to exploration or specific
@@ -18,11 +19,12 @@ import io.github.hato1883.api.world.board.IHexTile;
  * <h3>Example Usage:</h3>
  * <pre>{@code
  * eventBus.registerListener(TileRevealEvent.class, event -> {
- *     IHexTile tile = event.getTile();
- *     System.out.println("Tile revealed at position: " + tile.getPosition());
+ *     ITile tile = event.getTile();
+ *     TilePosition pos = tile.getPosition();
+ *     System.out.println("Tile revealed at position: (" + pos.x + ", " + pos.y + ", " + pos.z + ")");
  *
  *     // Example: Cancel reveal under special mod rules
- *     if (tile.getTerrainType().isVolcano()) {
+ *     if (tile.getType().isVolcano()) {
  *         System.out.println("Volcano tiles are never revealed in this mod!");
  *         event.setCancelled(true);
  *     }
@@ -37,41 +39,41 @@ import io.github.hato1883.api.world.board.IHexTile;
  */
 public class TileRevealEvent extends BoardEvent implements Cancelable {
 
-    private final IHexTile tile;
+    private final ITile tile;
     private boolean canceled = false;
 
     /**
      * Creates a new {@code TileRevealEvent}.
      *
-     * @param gameState the current game state
      * @param tile the tile being revealed
+     * @param state the current game state
      */
-    public TileRevealEvent(IGameState gameState, IHexTile tile) {
-        super(gameState);
+    public TileRevealEvent(ITile tile, IGameState state) {
+        super(state);
         this.tile = tile;
     }
 
     /**
      * Gets the tile being revealed.
      *
-     * @return the {@link IHexTile} that is being revealed
+     * @return the {@link ITile} that is being revealed
      *
      * <h3>Defaults:</h3>
      * This method simply returns the tile associated with this event.
      *
      * <h3>Example Usage:</h3>
      * <pre>{@code
-     * IHexTile revealedTile = event.getTile();
+     * ITile revealedTile = event.getTile();
      * System.out.println("Revealed terrain: " + revealedTile.getTerrainType());
      * }</pre>
      *
      * <h3>See Also:</h3>
      * <ul>
-     *   <li>{@link IHexTile}</li>
+     *   <li>{@link ITile}</li>
      *   <li>{@link #getState()}</li>
      * </ul>
      */
-    public IHexTile getTile() {
+    public ITile getTile() {
         return tile;
     }
 
@@ -97,4 +99,3 @@ public class TileRevealEvent extends BoardEvent implements Cancelable {
         canceled = true;
     }
 }
-

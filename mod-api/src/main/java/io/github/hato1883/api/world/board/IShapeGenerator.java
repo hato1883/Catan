@@ -4,5 +4,5 @@ import java.util.Random;
 import java.util.Set;
 
 public interface IShapeGenerator {
-    Set<ICubeCoord> generateCoords(BoardGenerationConfig config, Random rng);
+    Set<ITilePosition> generateCoords(BoardGenerationConfig config, Random rng);
 }

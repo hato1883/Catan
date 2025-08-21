@@ -19,6 +19,13 @@ public class GameGUI implements IUI {
         configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
         configuration.setWindowedMode(640, 480);
         configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+        // Antialiasing and back buffer configuration
+        configuration.setBackBufferConfig(
+            8, 8, 8, 8, // RGBA bits
+            16,         // depth buffer bits
+            0,          // stencil buffer bits
+            8           // samples (anti-aliasing)
+        );
         return configuration;
     }
 }

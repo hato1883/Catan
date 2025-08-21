@@ -20,6 +20,22 @@ public class ServiceModuleManager {
             modules.add(new FactoryServicesModule());
             modules.add(new RegistryServicesModule());
             modules.add(new GameLogicServicesModule());
+            // Add facade initialization module last
+            modules.add(new FacadeInitializationModule());
+            // Line above is the same as calling:
+            /*
+            modules.add(new ServicesFacadeModule());
+            modules.add(new EventsFacadeModule());
+            modules.add(new FactoriesFacadeModule());
+            modules.add(new RegistriesFacadeModule());
+            modules.add(new ModLoadingFacadeModule());
+            */
+            return this;
+        }
+
+        public Builder withGUIModules() {
+            modules.add(new GUIServicesModule());
+            modules.add(new UIFacadeInitializationModule()); // Add UI facade initialization last
             return this;
         }
 

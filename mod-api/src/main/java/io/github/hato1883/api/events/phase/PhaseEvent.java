@@ -6,21 +6,22 @@ import io.github.hato1883.api.world.IGameState;
 
 /**
  * Base event class for game phase-related events.
- * Fired when a game phase is entered, updated, or exited.
  * Contains the current game state and the phase involved.
- * <h3>Example Usage:</h3>
- * <pre>{@code
- * eventBus.registerListener(PhaseEnterEvent.class, event -> {
- *     IGamePhase phase = event.getPhase();
- *     IGameState state = event.getGameState();
- *     System.out.println("Entered phase: " + phase.getName());
- * });
- * }</pre>
- * <h3>See Also:</h3>
- * <ul>
- *   <li>{@link PhaseUpdateEvent}</li>
- *   <li>{@link PhaseExitEvent}</li>
- * </ul>
+ *
+ * <p>Example usage:</p>
+ * <pre>
+ *   eventBus.registerListener(PhaseStartEvent.class, event -> {
+ *       // Handle phase start
+ *   });
+ *   eventBus.registerListener(PhaseEndEvent.class, event -> {
+ *       // Handle phase end
+ *   });
+ * </pre>
+ *
+ * <p>Note: This is an abstract class and cannot be instantiated directly.</p>
+ *
+ * @see PhaseStartEvent
+ * @see PhaseEndEvent
  */
 public abstract class PhaseEvent extends GameplayEvent {
     private final IGamePhase phase;
@@ -40,13 +41,6 @@ public abstract class PhaseEvent extends GameplayEvent {
      * Gets the game phase involved in this event.
      *
      * @return the current {@link IGamePhase}
-     * <h3>Defaults:</h3>
-     * Returns the phase that triggered the event.
-     * <h3>Example Usage:</h3>
-     * <pre>{@code
-     * IGamePhase phase = event.getPhase();
-     * System.out.println("Current phase: " + phase.getName());
-     * }</pre>
      */
     public IGamePhase getPhase() {
         return phase;

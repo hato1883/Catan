@@ -8,9 +8,6 @@ import io.github.hato1883.api.world.IGameState;
  *
  * <h3>Used By:</h3>
  * <ul>
- *   <li>WORLD_INIT</li>
- *   <li>WORLD_LOAD</li>
- *   <li>WORLD_CREATED</li>
  * </ul>
  *
  * <h3>Example Usage:</h3>
@@ -23,7 +20,7 @@ import io.github.hato1883.api.world.IGameState;
  *
  * <h3>See Also:</h3>
  * <ul>
- *   <li>{@link GameStartEvent}</li>
+ *   <li>{@link io.github.hato1883.api.events.lifecycle.GameStartEvent}</li>
  *   <li>{@link GameSaveEvent}</li>
  *   <li>{@link GameLoadEvent}</li>
  *   <li>{@link GameEndEvent}</li>

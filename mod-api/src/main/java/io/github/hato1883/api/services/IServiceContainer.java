@@ -1,5 +1,8 @@
 package io.github.hato1883.api.services;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 /**
  * A container interface that combines service location and registration capabilities.
  * <p>
@@ -38,4 +41,6 @@ package io.github.hato1883.api.services;
  * @author Hampus Toft
  * @version 1.0.0
  */
-public interface IServiceContainer extends IServiceLocator, IServiceRegistrar { }
+public interface IServiceContainer extends IServiceLocator, IServiceRegistrar {
+    Map<Class<?>, Supplier<?>>  getAll();
+}

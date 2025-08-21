@@ -8,7 +8,7 @@ public interface IPort extends IStructure {
     /**
      * @return the board position of this port (e.g. vertex position)
      */
-    ICubeCoord getPosition();
+    ITilePosition getPosition();
 
     /**
      * @return buildings connected to this port

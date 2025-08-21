@@ -13,6 +13,7 @@ public class RegistryServicesModule implements IServiceModule {
     @Override
     public void registerServices(IServiceContainer registrar) {
         registerGameRegistries(registrar);
+        registerUIRegistries(registrar);
         registerTypeRegistries(registrar);
     }
 
@@ -28,10 +29,14 @@ public class RegistryServicesModule implements IServiceModule {
         registrar.registerIfAbsent(IPortTypeRegistry.class, (Supplier<? extends IPortTypeRegistry>) PortTypeRegistry::new);
     }
 
+    private void registerUIRegistries(IServiceRegistrar registrar) {
+        registrar.registerIfAbsent(IUIBatchingJobRegistry.class, (Supplier<? extends IUIBatchingJobRegistry>) UIBatchingJobRegistry::new);
+        // Add other UI-related registries here as needed
+    }
+
     private void registerTypeRegistries(IServiceRegistrar registrar) {
         registrar.registerIfAbsent(IResourceTypeRegistry.class, (Supplier<? extends IResourceTypeRegistry>) ResourceTypeRegistry::new);
         registrar.registerIfAbsent(IRoadTypeRegistry.class, (Supplier<? extends IRoadTypeRegistry>) RoadTypeRegistry::new);
         registrar.registerIfAbsent(ITileTypeRegistry.class, (Supplier<? extends ITileTypeRegistry>) TileTypeRegistry::new);
     }
 }
-

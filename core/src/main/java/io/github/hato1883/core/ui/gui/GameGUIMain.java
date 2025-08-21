@@ -3,18 +3,10 @@ package io.github.hato1883.core.ui.gui;
 import com.badlogic.gdx.Game;
 import io.github.hato1883.api.*;
 import io.github.hato1883.api.events.IEventListenerRegistrar;
-import io.github.hato1883.api.world.board.IBoard;
-import io.github.hato1883.api.world.board.IBoardGenerator;
-import io.github.hato1883.core.assets.management.loaders.RenderAssetLoader;
-import io.github.hato1883.core.assets.management.loaders.DefaultRenderAssetLoader;
-import io.github.hato1883.core.bootstrap.services.FacadeBootstrap;
+import io.github.hato1883.api.ui.screen.IScreenManager;
+import io.github.hato1883.api.ui.screen.ScreenRegistry;
 import io.github.hato1883.core.modloading.loading.ModLoader;
 import io.github.hato1883.core.bootstrap.services.ServiceBootstrap;
-import io.github.hato1883.core.ui.gui.controls.camera.CameraController;
-import io.github.hato1883.core.ui.gui.adapter.IBoardViewAdapter;
-import io.github.hato1883.core.ui.gui.rendering.BoardRenderer;
-import io.github.hato1883.core.config.RendererConfig;
-import io.github.hato1883.core.ui.gui.screen.GameBoardScreen;
 import io.github.hato1883.core.common.util.PathResolver;
 import org.slf4j.Logger;
 
@@ -38,6 +30,10 @@ public class GameGUIMain extends Game {
      */
     public static final Random PRNG = new Random();
 
+    private Identifier currentScreenId = null;
+    private IScreenManager screenManager;
+    private io.github.hato1883.api.ui.screen.ScreenRegistry screenRegistry;
+
     @Override
     public void create() {
         LOGGER.info("Starting game!");
@@ -45,10 +41,6 @@ public class GameGUIMain extends Game {
         LOGGER.info("Register default services...");
         ServiceBootstrap.initialize();
         LOGGER.info("Default services have been registered");
-
-        LOGGER.info("Setup Facades...");
-        FacadeBootstrap.initialize(ServiceBootstrap.getContainer());
-        LOGGER.info("Facades have been initialized");
 
         LOGGER.info("Setting up Mod Loader...");
         loader = new ModLoader();
@@ -71,16 +63,22 @@ public class GameGUIMain extends Game {
         }
         LOGGER.info("All Catan mods have been loaded!");
 
+        screenRegistry = Services.require(ScreenRegistry.class);
+        screenManager = Services.require(IScreenManager.class);
+        screenManager.showDefaultScreen();
+    }
 
-        IBoardGenerator boardGenerator = Services.require(IBoardGenerator.class);
-        IBoard board = boardGenerator.generateBoard(Identifier.of("basemod", "classic_hex"), PRNG);
-
-        // Wire abstractions
-        RendererConfig cfg = RendererConfig.defaultConfig();
-        CameraController camera = new CameraController(cfg);
-        BoardRenderer renderer = new BoardRenderer(new IBoardViewAdapter(board), cfg);
-        RenderAssetLoader assets = new DefaultRenderAssetLoader("fonts/Roboto-Regular.ttf");
-
-        setScreen(new GameBoardScreen(camera, renderer, assets));
+    @Override
+    public void render() {
+        Identifier newScreenId = screenManager.getCurrentScreenId();
+        if (newScreenId != null && !newScreenId.equals(currentScreenId)) {
+            // Switch screens using LibGDX setScreen
+            var newScreen = screenRegistry.getScreen(newScreenId);
+            if (newScreen != null) {
+                setScreen(newScreen); // LibGDX will call show(), hide(), etc.
+                currentScreenId = newScreenId;
+            }
+        }
+        super.render(); // Let LibGDX handle rendering the current screen
     }
 }

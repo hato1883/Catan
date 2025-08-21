@@ -1,5 +1,6 @@
 package io.github.hato1883.core.modloading.loading;
 
+import io.github.hato1883.api.LogManager;
 import io.github.hato1883.api.ModLoading;
 import io.github.hato1883.api.mod.CatanMod;
 import io.github.hato1883.api.mod.load.*;

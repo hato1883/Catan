@@ -63,7 +63,6 @@ public class ClassGraphListenerScanner implements IModListenerScanner {
 
     private List<Class<?>> scanMod(ILoadedMod mod) {
         String base = basePackageOf(mod.mainClass());
-        LOGGER.debug("Scanning {} for listeners in base package {}", mod.id(), base);
         try (ScanResult sr = new ClassGraph()
             .enableAllInfo()
             .acceptPackages(base)

@@ -93,6 +93,10 @@ public final class ServiceContainer implements IServiceContainer {
         ModLoader.class
     );
 
+    public Map<Class<?>, Supplier<?>> getAll() {
+        return Map.copyOf(SERVICES);
+    }
+
     public <T> void register(@NotNull Class<T> type, @NotNull T instance) {
         validateTypeAndInstance(type, instance);
         if (SERVICES.containsKey(type)) {
@@ -101,20 +105,20 @@ public final class ServiceContainer implements IServiceContainer {
         SERVICES.put(type, new SingletonSupplier<>(instance));
     }
 
-    @Override
-    public <T> void registerIfAbsent(@NotNull Class<T> type, @NotNull T instance){
-        validateTypeAndInstance(type, instance);
-        if (!SERVICES.containsKey(type)) {
-            SERVICES.put(type, new SingletonSupplier<>(instance));
-        }
-    }
-
     public <T> void register(@NotNull Class<T> type, @NotNull Supplier<? extends T> supplier) {
         validateTypeAndSupplier(type, supplier);
         if (SERVICES.containsKey(type)) {
             throw new ServiceProtectedException("Service already registered for type: " + type.getName());
         }
         SERVICES.put(type, supplier);
+    }
+
+    @Override
+    public <T> void registerIfAbsent(@NotNull Class<T> type, @NotNull T instance){
+        validateTypeAndInstance(type, instance);
+        if (!SERVICES.containsKey(type)) {
+            SERVICES.put(type, new SingletonSupplier<>(instance));
+        }
     }
 
     @Override

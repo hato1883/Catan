@@ -107,7 +107,7 @@ public final class ModLoading {
         return initializer;
     }
 
-    public static void initialize(@NotNull IServiceLocator provider) {
+    static void initialize(@NotNull IServiceLocator provider) {
         if (serviceProvider != null) {
             throw new IllegalStateException("ModLoading already initialized");
         }
@@ -117,7 +117,7 @@ public final class ModLoading {
     /**
      * Resets all static state for testing/mocking purposes.
      */
-    public static void reset() {
+    static void reset() {
         serviceProvider = null;
         discovery = null;
         dependencyResolver = null;

@@ -64,6 +64,7 @@ public final class ServiceBootstrap {
     private static void registerCoreServices() {
         ServiceModuleManager moduleManager = new ServiceModuleManager.Builder()
             .withCoreModules()
+            .withGUIModules()
             .build();
 
         moduleManager.registerAllServices(provider);

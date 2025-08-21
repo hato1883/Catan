@@ -14,9 +14,23 @@ public class UrlModClassLoaderFactory implements IModClassLoaderFactory {
         this.parent = parent;
     }
 
+    private static class ModClassLoader extends URLClassLoader {
+        public ModClassLoader(URL[] urls, ClassLoader parent) {
+            super(urls, parent);
+        }
+
+        @Override
+        protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+            if (name.startsWith("io.github.hato1883.api.")) {
+                return getParent().loadClass(name);
+            }
+            return super.loadClass(name, resolve);
+        }
+    }
+
     @Override
     public ClassLoader createClassLoader(Path modPath) throws Exception {
         URL url = modPath.toUri().toURL();
-        return new URLClassLoader(new URL[] { url }, parent);
+        return new ModClassLoader(new URL[] { url }, parent);
     }
 }

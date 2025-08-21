@@ -1,5 +1,6 @@
 package io.github.hato1883.core.events.bus;
 
+import com.badlogic.gdx.Gdx;
 import io.github.hato1883.api.events.EventPriority;
 import io.github.hato1883.api.events.IEvent;
 import io.github.hato1883.api.events.IEventListener;
@@ -34,10 +35,11 @@ public class EventBus implements IEventBus {
 
     @Override
     public <T extends IEvent> void registerListener(String modId, Class<T> eventType, EventPriority priority, IEventListener<T> listener) {
-        validateRegisterParameters(modId, eventType, priority, listener);
-
         RegisteredListener<T> regListener = new RegisteredListener<>(modId, priority, listener, eventType);
-        addListenerToMaps(regListener, eventType);
+        listeners.computeIfAbsent(eventType, k -> new ArrayList<>());
+        List<RegisteredListener<?>> eventListeners = listeners.get(eventType);
+        eventListeners.add(regListener);
+        listenersByMod.computeIfAbsent(regListener.modId(), k -> new ArrayList<>()).add(regListener);
     }
 
     @Override
@@ -75,6 +77,14 @@ public class EventBus implements IEventBus {
 
         // Submit async task that captures the current state of listeners
         asyncExecutor.executeAsync(() -> dispatchToListeners(event, eventListeners), "event-dispatch");
+    }
+
+    @Override
+    public <T extends IEvent> void dispatchOnMainThread(T event) {
+        validateEvent(event);
+        List<RegisteredListener<?>> eventListeners = getEventListeners(event);
+        if (eventListeners.isEmpty()) return;
+        Gdx.app.postRunnable(() -> dispatchToListeners(event, eventListeners));
     }
 
     // Shutdown method for proper resource cleanup
@@ -124,7 +134,8 @@ public class EventBus implements IEventBus {
 
     private <T extends IEvent> void validateEvent(T event) {
         if (event == null) {
-            throw new IllegalArgumentException("event cannot be null");
+            throw
+                new IllegalArgumentException("event cannot be null");
         }
     }
 

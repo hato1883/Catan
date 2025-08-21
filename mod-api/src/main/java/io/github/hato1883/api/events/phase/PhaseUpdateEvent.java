@@ -19,8 +19,8 @@ import io.github.hato1883.api.world.IGameState;
  * }</pre>
  * <h3>See Also:</h3>
  * <ul>
- *   <li>{@link PhaseEnterEvent}</li>
- *   <li>{@link PhaseExitEvent}</li>
+ *   <li>{@link PhaseStartEvent}</li>
+ *   <li>{@link PhaseEndEvent}</li>
  *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
  * </ul>
  */

@@ -1,6 +1,7 @@
 package io.github.hato1883.api;
 
 import io.github.hato1883.api.services.*;
+import io.github.hato1883.api.ui.render.IBoardRenderer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -101,170 +102,32 @@ public final class Services {
 
     /**
      * Initialize the Services facade with a ServiceContainer instance.
-     *
-     * <p><b>Important:</b> This method must be called exactly once during application startup
-     * before any service registration or location operations are performed. Subsequent calls
-     * will result in an exception.</p>
-     *
-     * <p><b>Thread Safety:</b> This method uses volatile variables and is thread-safe for
-     * initialization scenarios.</p>
-     *
-     * <p><b>Valid Example:</b></p>
-     * <pre>{@code
-     * IServiceContainer container = new SimpleServiceContainer();
-     * Services.initialize(container);
-     *
-     * // Now services can be registered and retrieved
-     * Services.register(IBoardGenerator.class, new DefaultBoardGenerator());
-     * IBoardGenerator generator = Services.require(IBoardGenerator.class);
-     * }</pre>
-     *
-     * <p><b>Invalid Example (multiple initialization):</b></p>
-     * <pre>{@code
-     * Services.initialize(container1);
-     * Services.initialize(container2);
-     * // throws IllegalStateException: Services facade is already initialized
-     * }</pre>
-     *
-     * <p><b>Invalid Example (null container):</b></p>
-     * <pre>{@code
-     * Services.initialize(null);
-     * // throws IllegalArgumentException: Service container cannot be null
-     * }</pre>
-     *
-     * @param container the service container implementation to use for all subsequent operations
-     * @throws IllegalStateException if the Services facade has already been initialized
-     * @throws IllegalArgumentException if the provided container is null
-     *
-     * @see #replaceContainer(IServiceContainer)
-     * @see #isInitialized()
-     * @see #reset()
+     * <p><b>Restricted:</b> This method is package-private and should only be called by core initializers.
+     * Modders and external code must not call this method.
+     * Throws if called more than once.
      */
-    public static void initialize(@NotNull IServiceContainer container) {
+    static void initialize(@NotNull IServiceContainer container) {
         if (initialized) {
             throw new IllegalStateException("Services facade is already initialized");
         }
-        serviceContainer = validateContainer(container);
+        serviceContainer = container;
         initialized = true;
     }
 
     /**
      * Replaces the underlying service container with a new instance.
-     *
-     * <p><b>Important:</b> This method is primarily intended for testing scenarios or
-     * hot-swapping implementations at runtime. Use with caution as it immediately
-     * affects all subsequent service operations.</p>
-     *
-     * <p><b>Key Considerations:</b></p>
-     * <ul>
-     *     <li>Marks the facade as initialized if not already</li>
-     *     <li>Immediately replaces all service access points</li>
-     *     <li>Does not transfer existing services from the previous container</li>
-     *     <li>Thread-safe due to volatile serviceContainer reference</li>
-     * </ul>
-     *
-     * <p><b>Valid Example (testing):</b></p>
-     * <pre>{@code
-     *     // Setup mock container for unit testing
-     *     IServiceContainer mockContainer = mock(IServiceContainer.class);
-     *     when(mockContainer.contains(ILogger.class)).thenReturn(true);
-     *     when(mockContainer.getService(ILogger.class)).thenReturn(Optional.of(mockLogger));
-     *
-     *     Services.replaceContainer(mockContainer);
-     *
-     *     // Now all service operations use the mock container
-     *     boolean hasLogger = Services.contains(ILogger.class);
-     *     Optional<ILogger> logger = Services.getService(ILogger.class);
-     * }</pre>
-     *
-     * <p><b>Valid Example (runtime swapping):</b></p>
-     * <pre>{@code
-     *     // Switch to a different container implementation
-     *     IServiceContainer newContainer = new AdvancedServiceContainer();
-     *     Services.replaceContainer(newContainer);
-     *
-     *     // Re-register essential services in the new container
-     *     Services.register(IConfigService.class, configService);
-     *     Services.register(ILogger.class, logger);
-     * }</pre>
-     *
-     * <p><b>Invalid Example (null container):</b></p>
-     * <pre>{@code
-     *     // Attempt to replace with null container
-     *     Services.replaceContainer(null);
-     *     // throws IllegalArgumentException: Service container cannot be null
-     * }</pre>
-     *
-     * @param container the new service container to use for all service operations
-     * @throws IllegalArgumentException if the provided container is null
-     *
-     * @see #initialize(IServiceContainer)
-     * @see #isInitialized()
-     * @see #reset()
+     * <p><b>Restricted:</b> Package-private. Only for core/testing. Not for modder use.</p>
      */
-    public static void replaceContainer(@NotNull IServiceContainer container) {
-        serviceContainer = validateContainer(container);
+    static void replaceContainer(@NotNull IServiceContainer container) {
+        serviceContainer = container;
         initialized = true;
     }
 
     /**
-     * Validates that the provided service container is not null.
-     *
-     * @param container the container to validate
-     * @return the validated container
-     * @throws IllegalArgumentException if the container is null
-     */
-    private static IServiceContainer validateContainer(IServiceContainer container) {
-        if (container == null) throw new IllegalArgumentException("Service container cannot be null");
-        return container;
-    }
-
-    /**
      * Resets the Services facade to its uninitialized state.
-     *
-     * <p><b>Important:</b> This method is primarily intended for testing purposes and should
-     * generally not be used in production code. Resetting the facade while the application
-     * is running will cause services to become unavailable to other parts of the system.</p>
-     *
-     * <p><b>Testing Example:</b></p>
-     * <pre>{@code
-     *     @Test
-     *     public void testServiceRegistration() {
-     *         // Setup
-     *         IServiceContainer testContainer = new TestServiceContainer();
-     *         Services.initialize(testContainer);
-     *
-     *         // Test service registration
-     *         Services.register(IBoardGenerator.class, new MockBoardGenerator());
-     *
-     *         // Reset for next test
-     *         Services.reset();
-     *
-     *         // Verify reset worked
-     *         assertFalse(Services.isInitialized());
-     *     }
-     * }</pre>
-     *
-     * <p><b>Invalid Production Usage Example:</b></p>
-     * <pre>{@code
-     *     public void handleUserRequest() {
-     *         // Process request
-     *         IBoardGenerator generator = Services.require(IBoardGenerator.class);
-     *
-     *         // Reset services (DANGEROUS - other requests will fail)
-     *         Services.reset();
-     *
-     *         // Subsequent calls will fail
-     *         ILogger logger = Services.require(ILogger.class);
-     *         // throws IllegalStateException: Services facade has not been initialized
-     *     }
-     * }</pre>
-     *
-     * @see #isInitialized()
-     * @see #initialize(IServiceContainer)
-     * @see #replaceContainer(IServiceContainer)
+     * <p><b>Restricted:</b> Package-private. Only for core/testing. Not for modder use.</p>
      */
-    public static void reset() {
+    static void reset() {
         serviceContainer = null;
         initialized = false;
     }
@@ -766,7 +629,7 @@ public final class Services {
      * @see #require(Class)
      * @see #contains(Class)
      */
-    public static IServiceLocator getLocator() {
+    static IServiceLocator getLocator() {
         ensureInitialized();
         return serviceContainer;
     }
@@ -813,7 +676,7 @@ public final class Services {
      * @see #replace(Class, Object)
      * @see #unregister(Class)
      */
-    public static IServiceRegistrar getRegistrar() {
+    static IServiceRegistrar getRegistrar() {
         ensureInitialized();
         return serviceContainer;
     }

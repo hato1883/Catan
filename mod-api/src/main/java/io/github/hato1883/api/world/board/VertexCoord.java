@@ -35,7 +35,7 @@ public class VertexCoord {
      * Stored in consistent sorted order to ensure equality comparison works correctly.
      * May contain null values for vertices at the edge of the board.
      */
-    private final ICubeCoord[] adjacentTiles; // Always exactly 3 tiles
+    private final ITilePosition[] adjacentTiles; // Always exactly 3 tiles
 
     /**
      * Pre-computed hash code for better performance in hash-based collections.
@@ -60,16 +60,10 @@ public class VertexCoord {
      * <h3>Edge Cases:</h3>
      * At least two coordinates should be non-null for valid board positions.
      */
-    public VertexCoord(ICubeCoord tile1, ICubeCoord tile2, ICubeCoord tile3) {
-        if (tile1 == null && tile2 == null && tile3 == null) {
-            throw new IllegalArgumentException("All three coordinates cannot be null");
-        }
-        // Sort the tiles for consistent equality comparison
-        this.adjacentTiles = new ICubeCoord[]{tile1, tile2, tile3};
-        Arrays.sort(this.adjacentTiles, Comparator.comparingInt(ICubeCoord::hashCode));
-
-        // Pre-compute hash for performance
-        this.hashCode = Objects.hash(adjacentTiles[0], adjacentTiles[1], adjacentTiles[2]);
+    public VertexCoord(ITilePosition tile1, ITilePosition tile2, ITilePosition tile3) {
+        this.adjacentTiles = new ITilePosition[]{tile1, tile2, tile3};
+        Arrays.sort(this.adjacentTiles, Comparator.comparingInt(ITilePosition::hashCode));
+        this.hashCode = Arrays.hashCode(this.adjacentTiles);
     }
 
     /**
@@ -106,8 +100,8 @@ public class VertexCoord {
         return hashCode;
     }
 
-    public List<ICubeCoord> getAdjacentTiles() {
-        return List.of(adjacentTiles);
+    public List<ITilePosition> getAdjacentTiles() {
+        return Arrays.asList(adjacentTiles);
     }
 
 }

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class Factories {
+public final class Factories {
 
     private static IServiceLocator serviceProvider;
 
@@ -39,14 +39,18 @@ public class Factories {
         return resource().create(id, name);
     }
 
-    public static void initialize(@NotNull IServiceLocator provider) {
+    static void initialize(@NotNull IServiceLocator provider) {
         if (serviceProvider != null) {
             throw new IllegalStateException("Factories already initialized");
         }
         serviceProvider = provider;
     }
 
-    private static IServiceLocator getProvider() {
+    static void reset() {
+        serviceProvider = null;
+    }
+
+    static IServiceLocator getProvider() {
         if (serviceProvider == null) {
             throw new IllegalStateException("Factories has not been initialized!");
         }

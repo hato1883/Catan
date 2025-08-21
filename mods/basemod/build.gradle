@@ -13,8 +13,9 @@ repositories {
 
 dependencies {
   implementation project(':core')
-  implementation project(':mod-api')
+  compileOnly project(':mod-api')
   runtimeOnly project(':core')
+  implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 }
 
 import groovy.json.JsonSlurper

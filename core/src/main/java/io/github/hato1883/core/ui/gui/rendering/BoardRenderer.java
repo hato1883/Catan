@@ -9,17 +9,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.github.hato1883.api.Identifier;
 import io.github.hato1883.api.LogManager;
-import io.github.hato1883.api.world.board.IHexTile;
+import io.github.hato1883.api.assets.TextureUpgradeCallback;
+import io.github.hato1883.api.assets.TextureUpgradeNotifier;
+import io.github.hato1883.api.ui.factories.PolygonSpriteFactory;
+import io.github.hato1883.api.ui.sprites.PolygonTileSprite;
+import io.github.hato1883.api.world.board.ITile;
 import io.github.hato1883.api.world.board.ITileType;
-import io.github.hato1883.core.assets.management.loaders.LoadedAssets;
-import io.github.hato1883.core.assets.management.textures.TextureUpgradeCallback;
-import io.github.hato1883.core.assets.management.textures.TileTextureProvider;
+import io.github.hato1883.api.world.board.PolygonShape;
 import io.github.hato1883.api.ui.model.IBoardView;
+import io.github.hato1883.api.world.board.ITileGrid;
+import io.github.hato1883.core.assets.management.loaders.LoadedAssets;
 import io.github.hato1883.core.config.RendererConfig;
-import io.github.hato1883.core.ui.gui.sprites.HexagonSprite;
 import io.github.hato1883.core.ui.gui.sprites.NumberTokenSprite;
-import io.github.hato1883.core.factories.sprites.HexagonSpriteFactory;
-import io.github.hato1883.core.factories.sprites.NumberTokenFactory;
+import io.github.hato1883.core.assets.management.textures.TileTextureProvider;
 
 import java.util.*;
 
@@ -29,7 +31,7 @@ import java.util.*;
 public final class BoardRenderer {
     private final IBoardView board;
     private final RendererConfig config;
-    private final HexagonSpriteFactory spriteFactory;
+    private final PolygonSpriteFactory spriteFactory;
 
     private final PolygonSpriteBatch polyBatch = new PolygonSpriteBatch();
     private final SpriteBatch spriteBatch = new SpriteBatch();
@@ -42,20 +44,23 @@ public final class BoardRenderer {
     };
 
     // LOD cache
-    private final Map<Integer, List<HexagonSprite>> lodToSprites = new HashMap<>();
+    private final Map<Integer, List<PolygonTileSprite>> lodToSprites = new HashMap<>();
     private final List<NumberTokenSprite> tokenSprites = new ArrayList<>();
-    private List<HexagonSprite> currentSpriteList = Collections.emptyList();
+    private List<PolygonTileSprite> currentSpriteList = Collections.emptyList();
     private int currentLod = -1;
 
     public BoardRenderer(IBoardView board, RendererConfig config) {
         this.board = board;
         this.config = config;
-        this.spriteFactory = new HexagonSpriteFactory(config.tileRadius(), config.tileGap());
+        this.spriteFactory = new PolygonSpriteFactory();
     }
 
     public void initializeSprites(LoadedAssets assets) {
         TileTextureProvider textures = assets.tileTextures();
-        textures.onTextureUpgrade(upgradeCallback);
+        // Register upgrade callback using the notifier interface
+        if (textures instanceof TextureUpgradeNotifier notifier) {
+            notifier.onTextureUpgrade(upgradeCallback);
+        }
 
         // Rebuild hex tiles (all LODs)
         generateHexagonSprites(textures);
@@ -77,37 +82,35 @@ public final class BoardRenderer {
     }
 
     private void generateNumberTokenSprites(BitmapFont font) {
-        NumberTokenFactory tokenFactory = new NumberTokenFactory();
-        tokenSprites.clear();
-
-        List<HexagonSprite> lod0Sprites = lodToSprites.get(0);
-        if (lod0Sprites == null) return;
-
-        for (HexagonSprite sprite : lod0Sprites) {
-            IHexTile tile = sprite.getTile();
-            float cx = sprite.getX() + sprite.getOriginX();
-            float cy = sprite.getY() + sprite.getOriginY();
-            List<NumberTokenSprite> tokens = tokenFactory.createTokens(tile.getProductionNumbers(), cx, cy, font);
-            tokenSprites.addAll(tokens);
-        }
+//        NumberTokenFactory tokenFactory = new NumberTokenFactory();
+//        tokenSprites.clear();
+//
+//        List<HexagonSprite> lod0Sprites = lodToSprites.get(0);
+//        if (lod0Sprites == null) return;
+//
+//        for (HexagonSprite sprite : lod0Sprites) {
+//            ITile tile = sprite.getTile();
+//            float cx = sprite.getX() + sprite.getOriginX();
+//            float cy = sprite.getY() + sprite.getOriginY();
+//            List<NumberTokenSprite> tokens = tokenFactory.createTokens(tile.getProductionNumbers(), cx, cy, font);
+//            tokenSprites.addAll(tokens);
+//        }
     }
 
     private void regenerateHexagonSpritesForLod(TileTextureProvider textures, int lod) {
-        List<HexagonSprite> sprites = new ArrayList<>(board.getTiles().size());
-
-        for (Map.Entry<ITileType, List<IHexTile>> e : board.getTilesGroupedByTileType().entrySet()) {
+        List<PolygonTileSprite> sprites = new ArrayList<>(board.getTiles().size());
+        Optional<ITileGrid> optGrid = board.getGrid();
+        for (Map.Entry<ITileType, List<ITile>> e : board.getTilesGroupedByTileType().entrySet()) {
             ITileType type = e.getKey();
             TextureRegion region = textures.getTileTexture(lod, type.getId());
-
-            for (IHexTile tile : e.getValue()) {
-                HexagonSprite sprite = spriteFactory.create(tile, region);
+            for (ITile tile : e.getValue()) {
+                ITileGrid grid = optGrid.orElseGet(() -> board.getGridForTile(tile));
+                PolygonShape shape = grid.getPolygonShape(tile);
+                PolygonTileSprite sprite = spriteFactory.create(tile, region, shape);
                 sprites.add(sprite);
             }
         }
-
         lodToSprites.put(lod, sprites);
-
-        // if we're currently displaying this LOD, update the active sprite list
         if (lod == currentLod) {
             currentSpriteList = lodToSprites.get(currentLod);
         }
@@ -127,7 +130,7 @@ public final class BoardRenderer {
         }
 
         polyBatch.begin();
-        for (HexagonSprite s : currentSpriteList) s.draw(polyBatch);
+        for (PolygonTileSprite s : currentSpriteList) s.draw(polyBatch);
         polyBatch.end();
 
         spriteBatch.begin();

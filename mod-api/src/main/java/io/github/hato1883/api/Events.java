@@ -45,7 +45,7 @@ public final class Events {
         getEventListenerRegistrar().registerListeners(listener);
     }
     public static <T extends IEvent> void registerListener(String modId, Class<T> eventType, EventPriority priority, IEventListener<T> listener) {
-        getEventListenerRegistrar().registerListeners(listener);
+        getEventListenerRegistrar().registerListener(modId, eventType, priority, listener);
     }
 
     /**
@@ -65,14 +65,18 @@ public final class Events {
     private static IEventBusService getEventBus() { return  getProvider().require(IEventBusService.class); }
     private static IEventListenerRegistrar getEventListenerRegistrar() { return  getProvider().require(IEventListenerRegistrar.class); }
 
-    public static void initialize(@NotNull IServiceLocator provider) {
+    static void initialize(@NotNull IServiceLocator provider) {
         if (serviceProvider != null) {
             throw new IllegalStateException("Events already initialized");
         }
         serviceProvider = provider;
     }
 
-    private static IServiceLocator getProvider() {
+    static void reset() {
+        serviceProvider = null;
+    }
+
+    static IServiceLocator getProvider() {
         if (serviceProvider == null) {
             throw new IllegalStateException("Events has not been initialized!");
         }

@@ -53,6 +53,12 @@ public class EventBusService implements IEventBusService {
     }
 
     @Override
+    public <T extends IEvent> void dispatchOnMainThread(T event) {
+        checkNotShutdown();
+        eventBus.dispatchOnMainThread(event);
+    }
+
+    @Override
     public void shutdown() {
         if (!shutdown) {
             shutdown = true;

@@ -3,12 +3,9 @@ package io.github.hato1883.core.ui.tui;
 import io.github.hato1883.api.LogManager;
 import io.github.hato1883.api.Services;
 import io.github.hato1883.api.events.IEventListenerRegistrar;
-import io.github.hato1883.api.services.IServiceContainer;
 import io.github.hato1883.api.world.board.IBoard;
-import io.github.hato1883.api.services.IServiceLocator;
 import io.github.hato1883.api.ui.IUI;
 import io.github.hato1883.api.ui.TUIScreen;
-import io.github.hato1883.core.bootstrap.services.FacadeBootstrap;
 import io.github.hato1883.core.modloading.loading.ModLoader;
 import io.github.hato1883.core.bootstrap.services.ServiceBootstrap;
 import io.github.hato1883.core.ui.tui.screen.BoardCreationTUIScreen;
@@ -36,10 +33,6 @@ public class GameTUI implements IUI {
         LOGGER.info("Register default services...");
         ServiceBootstrap.initialize();
         LOGGER.info("Default services have been registered");
-
-        LOGGER.info("Setup Facades...");
-        FacadeBootstrap.initialize(ServiceBootstrap.getContainer());
-        LOGGER.info("Facades have been initialized");
 
         // Register default events
         LOGGER.info("Registering base game event Listeners...");

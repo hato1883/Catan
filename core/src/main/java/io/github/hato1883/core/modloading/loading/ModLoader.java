@@ -36,7 +36,6 @@ public class ModLoader {
 
         LOGGER.info("Fixing Mod Loading order....");
         Map<ModMetadata, Path> loadOrder = Map.of();
-        LOGGER.info("From: {}", modData);
         try {
             loadOrder = ModLoading.dependencyResolver().resolveLoadOrder(modData);
         } catch (Exception ex) {
@@ -53,7 +52,6 @@ public class ModLoader {
             LOGGER.error("You can find the full technical log in the game log files.");
             throw new ModLoadingException("Mod loading failed due to dependency issues.", ex);
         }
-        LOGGER.info("to: {}", loadOrder);
 
         LOGGER.info("Creating mod instances...");
         List<ILoadedMod> loaded = createModInstances(loadOrder);

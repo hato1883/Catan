@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.github.hato1883.api.Identifier;
 import io.github.hato1883.api.LogManager;
+import io.github.hato1883.api.assets.AssetUpgradeCallback;
+import io.github.hato1883.api.assets.TextureUpgradeCallback;
+import io.github.hato1883.api.assets.TextureUpgradeNotifier;
 import io.github.hato1883.api.mod.load.asset.AssetCategory;
 import org.slf4j.Logger;
 
@@ -13,7 +16,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public final class LodAwareTileTextureProvider implements TileTextureProvider {
+public final class LodAwareTileTextureProvider implements TileTextureProvider, TextureUpgradeNotifier {
 
     private final boolean delayedMode = false; // toggle this to switch behaviors
     private final long delayMillis = 5000; // 5 seconds
@@ -25,7 +28,7 @@ public final class LodAwareTileTextureProvider implements TileTextureProvider {
     private final Path textureAssetRoot;
 
     // Safe to mutate while iterating during notify
-    private final List<TextureUpgradeCallback<TileTextureProvider>> upgradeCallbacks = new CopyOnWriteArrayList<>();
+    private final List<TextureUpgradeCallback<?>> upgradeCallbacks = new CopyOnWriteArrayList<>();
 
     // We only need one pending entry per LOD (atlas-level loading)
     private final Set<Integer> pendingLods = new HashSet<>();
@@ -46,7 +49,6 @@ public final class LodAwareTileTextureProvider implements TileTextureProvider {
         // Try requested LOD → ... → LOD3
         for (int candidateLod = lod; candidateLod <= 3; candidateLod++) {
             Path path = atlasPath(AssetCategory.TILE, candidateLod);
-
             if (Files.exists(path) && assetManager.isLoaded(path.toString(), TextureAtlas.class)) {
                 TextureAtlas atlas = assetManager.get(path.toString(), TextureAtlas.class);
                 TextureRegion region = atlas.findRegion(regionName);
@@ -67,7 +69,11 @@ public final class LodAwareTileTextureProvider implements TileTextureProvider {
         Path lod3path = atlasPath(AssetCategory.TILE, 3);
         assetManager.finishLoadingAsset(lod3path.toString());
         TextureAtlas atlas = assetManager.get(lod3path.toString(), TextureAtlas.class);
-        return atlas.findRegion(regionName);
+        TextureRegion region = atlas.findRegion(regionName);
+        if (region == null) {
+            LOGGER.error("Region '{}' not found in forced LOD(3) atlas! Returning null.", regionName);
+        }
+        return region;
     }
 
     /** Call this once per frame, AFTER assetManager.update(). */
@@ -105,13 +111,34 @@ public final class LodAwareTileTextureProvider implements TileTextureProvider {
     }
 
     @Override
-    public void onTextureUpgrade(TextureUpgradeCallback<TileTextureProvider> callback) {
-        upgradeCallbacks.add(callback); // safe due to CopyOnWriteArrayList
+    public void onTextureUpgrade(TextureUpgradeCallback<?> callback) {
+        // Only add if the callback is for TileTextureProvider
+        upgradeCallbacks.add(callback);
+    }
+
+    @Override
+    public <T> void onAssetUpgrade(Class<T> assetType, AssetUpgradeCallback<T> callback) {
+        // Only handle texture upgrade notifiers
+        if (assetType == TextureUpgradeNotifier.class) {
+            // Safe cast: we know the callback is for textures
+            @SuppressWarnings("unchecked")
+            AssetUpgradeCallback<LodAwareTileTextureProvider> typed = (io.github.hato1883.api.assets.AssetUpgradeCallback<LodAwareTileTextureProvider>) callback;
+            // Wrap as a TextureUpgradeCallback for compatibility
+            this.onTextureUpgrade((provider, id, lod) -> typed.onUpgrade(this, id, lod));
+        }
+        // else: ignore other asset types
     }
 
     private void notifyUpgrade(Identifier idOrNull, int lod) {
-        // BoardRenderer currently refreshes all sprites; id is not used. Passing null avoids per-tile semantics.
-        for (var cb : upgradeCallbacks) cb.onUpgrade(this, idOrNull, lod);
+        for (var cb : upgradeCallbacks) {
+            @SuppressWarnings("unchecked")
+            TextureUpgradeCallback<TileTextureProvider> typedCb = (TextureUpgradeCallback<TileTextureProvider>) cb;
+            typedCb.onUpgrade(this, idOrNull, lod);
+        }
+    }
+
+    public void onLodAtlasLoaded(int lod) {
+        notifyUpgrade(null, lod);
     }
 
     private Path atlasPath(AssetCategory category, int lod) {

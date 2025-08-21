@@ -19,7 +19,6 @@ public class MainMenuTUIScreen  extends BaseTUIScreen {
     public void render() {
         if (!finished) {
             String input;
-            // System.out.println("inputQueue.poll():" + inputQueue.poll());
             // Non-blocking read
             while ((input = TUIInput.pollInput()) != null) {
                 switch (input) {

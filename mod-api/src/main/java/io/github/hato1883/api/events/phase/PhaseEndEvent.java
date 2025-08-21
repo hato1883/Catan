@@ -1,0 +1,55 @@
+package io.github.hato1883.api.events.phase;
+
+import io.github.hato1883.api.events.Cancelable;
+import io.github.hato1883.api.events.EventPriority;
+import io.github.hato1883.api.events.IEventBus;
+import io.github.hato1883.api.world.phase.IGamePhase;
+import io.github.hato1883.api.world.IGameState;
+import io.github.hato1883.api.events.IEventListener;
+
+/**
+ * Event fired when a game phase is ended.
+ * Triggered at the end of the phase.
+ * <h3>Example Usage:</h3>
+ * <pre>{@code
+ * eventBus.registerListener(PhaseEndEvent.class, event -> {
+ *     System.out.println("Phase ended: " + event.getPhase().getName());
+ * });
+ * }</pre>
+ * <h3>See Also:</h3>
+ * <ul>
+ *   <li>{@link PhaseEnterEvent}</li>
+ *   <li>{@link PhaseUpdateEvent}</li>
+ *   <li>{@link IEventBus#registerListener(String, Class, EventPriority, IEventListener)}</li> * </ul>
+ * </ul>
+ */
+public class PhaseEndEvent extends PhaseEvent implements Cancelable {
+
+    private boolean canceled = false;
+
+    public PhaseEndEvent(IGameState gameState, IGamePhase phase) {
+        super(gameState, phase);
+    }
+
+    /**
+     * Checks if this event has been canceled.
+     *
+     * @return {@code true} if the event has been canceled, {@code false} otherwise.
+     */
+    @Override
+    public boolean isCanceled() {
+        return canceled;
+    }
+
+    /**
+     * Cancels this event.
+     * <p>
+     * Once an event is canceled, it should not be uncanceled.
+     * Multiple calls to this method have no additional effect.
+     * </p>
+     */
+    @Override
+    public void cancel() {
+        canceled = true;
+    }
+}
