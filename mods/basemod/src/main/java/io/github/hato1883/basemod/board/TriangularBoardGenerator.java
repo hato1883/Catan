@@ -36,3 +36,4 @@ public class TriangularBoardGenerator implements IShapeGenerator {
         return coords;
     }
 }
+

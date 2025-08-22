@@ -11,7 +11,7 @@ import static io.github.hato1883.basemod.board.ClassicHexIslandBoard.DEFAULT_TIL
 public class TriangularBoardType implements IBoardType {
     private final Identifier id = Identifier.of(MOD_ID, "triangular_grid");
     private final String name = "Triangular Grid Board";
-    private final IShapeGenerator shapeGenerator = new TriangularBoardGenerator();
+    private final IShapeGenerator shapeGenerator = new TriangularBoardHexTilingGenerator();
 
     private final List<Identifier> tilesLeftToPlace = new ArrayList<>(DEFAULT_TILE_IDS);
     private final List<Integer> tokensLeftToPlace = new ArrayList<>(DEFAULT_NUMBERS);
