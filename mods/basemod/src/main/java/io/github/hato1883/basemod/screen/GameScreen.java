@@ -70,14 +70,6 @@ public class GameScreen extends AbstractEventDrivenScreen {
         // Register for asset upgrades (no instanceof needed)
         boardRenderer.registerAssetUpgradeNotifier(renderAssetLoader.getTextureUpgradeNotifier());
 
-        // Camera initialization for correct viewport and position
-        getCamera().setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        // Center camera on board
-        getCamera().position.set(0, 0, 0);
-        // centerCameraOnBoard();
-        getCamera().zoom = 1.0f;
-        getCamera().update();
-
         // Debug: create a 1x1 white texture for drawing
         debugBatch = new SpriteBatch();
         debugTexture = new Texture(1, 1, Pixmap.Format.RGBA8888);

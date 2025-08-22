@@ -1,7 +1,9 @@
 package io.github.hato1883.basemod;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import io.github.hato1883.api.Identifier;
 import io.github.hato1883.api.Registries;
 import io.github.hato1883.api.Services;
@@ -52,7 +54,6 @@ public class BaseModMain implements CatanMod {
         getLogger(MOD_ID).info("Registering UIOverlayRenderEvent listener...");
         // Register UI overlay event listener for toggle button
         Events.registerListener(MOD_ID, UIOverlayRenderEvent.class, EventPriority.NORMAL, event -> {
-            getLogger(MOD_ID).info("UIOverlayRenderEvent listener triggered");
             if (!toggleButtonAdded) {
                 Stage stage = event.getStage();
                 TextButton button = new TextButton("Toggle Red Ball", event.getSkin());
@@ -61,9 +62,9 @@ public class BaseModMain implements CatanMod {
                 // Place button in the center of the screen for visibility
                 button.setPosition(stage.getWidth() / 2f - button.getWidth() / 2f, stage.getHeight() / 2f - button.getHeight() / 2f);
                 button.getLabel().setFontScale(2.5f);
-                button.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ChangeListener() {
+                button.addListener(new ChangeListener() {
                     @Override
-                    public void changed(ChangeEvent changeEvent, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                    public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
                         AnimatedCircleBatchingJob.showRedBall = !AnimatedCircleBatchingJob.showRedBall;
                         button.setText(AnimatedCircleBatchingJob.showRedBall ? "Hide Red Ball" : "Show Red Ball");
                     }
