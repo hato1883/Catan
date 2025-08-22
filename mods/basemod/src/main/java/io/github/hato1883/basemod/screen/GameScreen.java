@@ -15,7 +15,7 @@ import io.github.hato1883.api.world.board.IBoardGenerator;
 import io.github.hato1883.core.assets.management.loaders.RenderAssetLoader;
 import io.github.hato1883.core.assets.management.loaders.DefaultRenderAssetLoader;
 import io.github.hato1883.core.assets.AssetProvider;
-import io.github.hato1883.basemod.board.CanonicalBoardRenderer;
+import io.github.hato1883.basemod.board.render.CanonicalBoardRenderer;
 import io.github.hato1883.api.ui.model.RendererConfig;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;

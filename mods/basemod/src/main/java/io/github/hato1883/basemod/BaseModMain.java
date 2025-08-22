@@ -1,14 +1,11 @@
 package io.github.hato1883.basemod;
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import io.github.hato1883.api.Identifier;
 import io.github.hato1883.api.Registries;
 import io.github.hato1883.api.Services;
 import io.github.hato1883.api.events.EventPriority;
-import io.github.hato1883.api.ui.model.RendererConfig;
-import io.github.hato1883.api.ui.render.IBoardRenderer;
 import io.github.hato1883.api.world.board.IBoardType;
 import io.github.hato1883.api.mod.CatanMod;
 import io.github.hato1883.api.mod.IModRegistrar;
@@ -16,9 +13,12 @@ import io.github.hato1883.api.events.ui.UIOverlayRenderEvent;
 import io.github.hato1883.api.Events;
 import io.github.hato1883.api.ui.screen.ScreenRegistry;
 import io.github.hato1883.api.ui.screen.IScreenManager;
-import io.github.hato1883.basemod.board.*;
+import io.github.hato1883.basemod.board.render.AnimatedCircleBatchingJob;
+import io.github.hato1883.basemod.board.resources.BaseCatanResources;
+import io.github.hato1883.basemod.board.resources.BaseCatanTiles;
 import io.github.hato1883.basemod.screen.MainMenuScreen;
 import io.github.hato1883.basemod.screen.GameScreen;
+import io.github.hato1883.basemod.board.logic.*;
 
 import static io.github.hato1883.api.LogManager.*;
 

@@ -1,12 +1,12 @@
-package io.github.hato1883.basemod.board;
+package io.github.hato1883.basemod.board.logic;
 
 import io.github.hato1883.api.Identifier;
 import io.github.hato1883.api.Registries;
 import io.github.hato1883.api.world.board.*;
 import java.util.*;
 import static io.github.hato1883.basemod.BaseModMain.MOD_ID;
-import static io.github.hato1883.basemod.board.ClassicHexIslandBoard.DEFAULT_NUMBERS;
-import static io.github.hato1883.basemod.board.ClassicHexIslandBoard.DEFAULT_TILE_IDS;
+import static io.github.hato1883.basemod.board.logic.ClassicHexIslandBoard.DEFAULT_NUMBERS;
+import static io.github.hato1883.basemod.board.logic.ClassicHexIslandBoard.DEFAULT_TILE_IDS;
 
 public class TriangularBoardType implements IBoardType {
     private final Identifier id = Identifier.of(MOD_ID, "triangular_grid");
@@ -52,4 +52,3 @@ public class TriangularBoardType implements IBoardType {
         return new TriangularGrid();
     }
 }
-

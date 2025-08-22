@@ -1,4 +1,4 @@
-package io.github.hato1883.basemod.board;
+package io.github.hato1883.basemod.board.resources;
 
 import io.github.hato1883.api.Factories;
 import io.github.hato1883.api.Identifier;

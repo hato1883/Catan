@@ -1,4 +1,4 @@
-package io.github.hato1883.basemod.board;
+package io.github.hato1883.basemod.board.render;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.PolygonSprite;

@@ -1,4 +1,4 @@
-package io.github.hato1883.basemod.board;
+package io.github.hato1883.basemod.board.logic;
 
 import io.github.hato1883.api.world.board.BoardGenerationConfig;
 import io.github.hato1883.api.world.board.IShapeGenerator;
