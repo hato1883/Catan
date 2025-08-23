@@ -43,7 +43,12 @@ public class AsyncServicesModule implements IServiceModule {
             return new EventBusService(asyncService, true);
         });
 
-        registrar.registerIfAbsent(IEventListenerRegistrar.class, (Supplier<? extends IEventListenerRegistrar>) EventListenerRegistrar::new);
+        registrar.registerIfAbsent(
+            IEventListenerRegistrar.class,
+            (Supplier<? extends IEventListenerRegistrar>) () -> new EventListenerRegistrar(
+                registrar.require(IEventBusService.class)
+            )
+        );
     }
 
     private ExecutorService createEventExecutor() {

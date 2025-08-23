@@ -43,4 +43,6 @@ import java.util.function.Supplier;
  */
 public interface IServiceContainer extends IServiceLocator, IServiceRegistrar {
     Map<Class<?>, Supplier<?>>  getAll();
+    IServiceLocator getLocator();
+    IServiceRegistrar getRegistrar();
 }

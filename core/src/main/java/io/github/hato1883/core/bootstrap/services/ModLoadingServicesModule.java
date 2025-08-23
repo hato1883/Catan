@@ -56,7 +56,9 @@ public class ModLoadingServicesModule implements IServiceModule {
         );
         serviceContainer.registerIfAbsent(
             IRegistryLoader.class,
-            (Supplier<? extends IRegistryLoader>) DefaultRegistryLoader::new
+            (Supplier<? extends IRegistryLoader>) () -> new DefaultRegistryLoader(
+                serviceContainer
+            )
         );
         serviceContainer.registerIfAbsent(IModAssetLoader.class, (Supplier<? extends IModAssetLoader>) () ->
                 new ModTextureModAssetLoader(

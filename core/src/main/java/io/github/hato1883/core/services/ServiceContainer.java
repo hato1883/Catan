@@ -97,6 +97,16 @@ public final class ServiceContainer implements IServiceContainer {
         return Map.copyOf(SERVICES);
     }
 
+    @Override
+    public IServiceLocator getLocator() {
+        return this;
+    }
+
+    @Override
+    public IServiceRegistrar getRegistrar() {
+        return this;
+    }
+
     public <T> void register(@NotNull Class<T> type, @NotNull T instance) {
         validateTypeAndInstance(type, instance);
         if (SERVICES.containsKey(type)) {

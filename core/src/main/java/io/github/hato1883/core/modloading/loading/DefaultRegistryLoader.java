@@ -12,7 +12,7 @@ public class DefaultRegistryLoader implements IRegistryLoader {
 
     private final IServiceLocator serviceLocator;
 
-    DefaultRegistryLoader (IServiceLocator serviceLocator) {
+    public DefaultRegistryLoader(IServiceLocator serviceLocator) {
         this.serviceLocator = serviceLocator;
     }
 
