@@ -1,5 +1,6 @@
 package io.github.hato1883.core.bootstrap.services;
 
+import io.github.hato1883.api.registries.IBoardTypeRegistry;
 import io.github.hato1883.api.services.IServiceContainer;
 import io.github.hato1883.api.world.board.BoardProvider;
 import io.github.hato1883.api.world.board.IBoardGenerator;
@@ -12,7 +13,12 @@ public class GameLogicServicesModule implements IServiceModule {
 
     @Override
     public void registerServices(IServiceContainer registrar) {
-        registrar.register(IBoardGenerator.class, (Supplier<? extends IBoardGenerator>) DefaultBoardGenerator::new);
+        registrar.register(
+            IBoardGenerator.class,
+            (Supplier<? extends IBoardGenerator>) () -> new DefaultBoardGenerator(
+                registrar.require(IBoardTypeRegistry.class)
+            )
+        );
         registrar.register(BoardProvider.class, (Supplier<? extends BoardProvider>) DefaultBoardProvider::new);
         // registrar.registerIfAbsent(IBoardGenerator.class, (Supplier<? extends IBoardGenerator>) DefaultBoardGenerator::new);
         // Add other game logic services as they're created

@@ -12,6 +12,10 @@ import io.github.hato1883.api.registries.IBuildingTypeRegistry;
 
 public class BuildingTypeRegistry extends Registry<IBuildingType> implements IBuildingTypeRegistry {
 
+    public BuildingTypeRegistry(io.github.hato1883.api.events.IEventBusService eventBus) {
+        super(eventBus);
+    }
+
     /* Example method */
     public IBuildingType getTown() {
         return get(Identifier.of("basemod", "town")).orElseThrow(() ->

@@ -12,6 +12,10 @@ import io.github.hato1883.api.registries.IGamePhaseRegistry;
 
 public class GamePhaseRegistry extends Registry<IGamePhase> implements IGamePhaseRegistry {
 
+    public GamePhaseRegistry(io.github.hato1883.api.events.IEventBusService eventBus) {
+        super(eventBus);
+    }
+
     @Override
     protected RegistryRegisterEvent<IGamePhase> createRegistryRegisterEvent(Identifier id, IGamePhase element) {
         return new GamePhaseRegisterEvent(this, id, element);

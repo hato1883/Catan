@@ -1,44 +1,50 @@
 package io.github.hato1883.core.registries;
 
-import io.github.hato1883.api.Registries;
+import io.github.hato1883.api.registries.*;
 import io.github.hato1883.api.world.phase.IGamePhase;
 import io.github.hato1883.api.entities.resource.IResourceType;
 import io.github.hato1883.api.world.board.*;
 import io.github.hato1883.api.mod.IModRegistrar;
+import io.github.hato1883.api.services.IServiceLocator;
 
 public class ModRegistrar implements IModRegistrar {
 
+    private final IServiceLocator serviceLocator;
+
+    public ModRegistrar(IServiceLocator serviceLocator) {
+        this.serviceLocator = serviceLocator;
+    }
+
     @Override
     public void registerGamePhase(IGamePhase gamePhase) {
-        Registries.phases().register(gamePhase.getId(), gamePhase);
+        serviceLocator.require(IGamePhaseRegistry.class).register(gamePhase.getId(), gamePhase);
     }
 
     @Override
     public void registerBoardType(IBoardType boardType) {
-        Registries.boards().register(boardType.getIdentifier(), boardType);
+        serviceLocator.require(IBoardTypeRegistry.class).register(boardType.getIdentifier(), boardType);
     }
     @Override
     public void registerTileType(ITileType tileType) {
-        Registries.tiles().register(tileType.getId(), tileType);
+        serviceLocator.require(ITileTypeRegistry.class).register(tileType.getId(), tileType);
     }
     @Override
     public void registerResourceType(IResourceType resourceType) {
-        Registries.resources().register(resourceType.getId(), resourceType);
+        serviceLocator.require(IResourceTypeRegistry.class).register(resourceType.getId(), resourceType);
     }
 
     @Override
     public void registerBuildingType(IBuildingType buildingType) {
-        Registries.buildings().register(buildingType.getId(), buildingType);
+        serviceLocator.require(IBuildingTypeRegistry.class).register(buildingType.getId(), buildingType);
     }
     @Override
     public void registerPortType(IPortType portType) {
-        Registries.ports().register(portType.getId(), portType);
+        serviceLocator.require(IPortTypeRegistry.class).register(portType.getId(), portType);
     }
     @Override
     public void registerRoadType(IRoadType roadType) {
-        Registries.roads().register(roadType.getId(), roadType);
+        serviceLocator.require(IRoadTypeRegistry.class).register(roadType.getId(), roadType);
     }
 
     // Add more methods as needed for other content types
 }
-

@@ -2,17 +2,19 @@ package io.github.hato1883.core.events.bus;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import io.github.hato1883.api.Services;
 import io.github.hato1883.api.events.*;
 import io.github.hato1883.api.LogManager;
-import io.github.hato1883.core.bootstrap.services.ServiceBootstrap;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 public class EventListenerRegistrar implements IEventListenerRegistrar {
-    private IEventBusService eventBusService;
+    private final IEventBusService eventBusService;
+
+    public EventListenerRegistrar(IEventBusService eventBusService) {
+        this.eventBusService = eventBusService;
+    }
 
     /**
      * Scans the given base package for classes with methods annotated with @EventListener,
@@ -112,8 +114,6 @@ public class EventListenerRegistrar implements IEventListenerRegistrar {
     }
 
     public <T extends IEvent> void registerListener(String modId, Class<T> eventType, EventPriority priority, IEventListener<T> listener) {
-        if (eventBusService == null)
-            eventBusService = Services.require(IEventBusService.class);
         eventBusService.registerListener(modId, eventType, priority, listener);
     }
 

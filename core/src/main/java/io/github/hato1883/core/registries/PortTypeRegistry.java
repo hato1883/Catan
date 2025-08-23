@@ -12,6 +12,10 @@ import io.github.hato1883.api.registries.IPortTypeRegistry;
 
 public class PortTypeRegistry extends Registry<IPortType> implements IPortTypeRegistry {
 
+    public PortTypeRegistry(io.github.hato1883.api.events.IEventBusService eventBus) {
+        super(eventBus);
+    }
+
     @Override
     protected RegistryRegisterEvent<IPortType> createRegistryRegisterEvent(Identifier id, IPortType element) {
         return new PortTypeRegisterEvent(this, id, element);

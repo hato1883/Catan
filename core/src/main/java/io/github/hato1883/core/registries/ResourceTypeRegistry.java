@@ -16,6 +16,10 @@ import java.util.Set;
 
 public class ResourceTypeRegistry extends Registry<IResourceType> implements IResourceTypeRegistry {
 
+    public ResourceTypeRegistry(io.github.hato1883.api.events.IEventBusService eventBus) {
+        super(eventBus);
+    }
+
     /**
      * Returns a set of a resources the given tile can produce
      * @param tile tile to check production type

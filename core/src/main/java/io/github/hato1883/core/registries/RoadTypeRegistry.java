@@ -12,6 +12,10 @@ import io.github.hato1883.api.registries.IRoadTypeRegistry;
 
 public class RoadTypeRegistry extends Registry<IRoadType> implements IRoadTypeRegistry {
 
+    public RoadTypeRegistry(io.github.hato1883.api.events.IEventBusService eventBus) {
+        super(eventBus);
+    }
+
     /* Example method */
     public IRoadType getDefaultRoad() {
         return get(Identifier.of("basemod", "road")).orElseThrow(() ->

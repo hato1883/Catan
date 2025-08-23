@@ -3,7 +3,6 @@ package io.github.hato1883.core.events.listeners;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import io.github.hato1883.api.LogManager;
-import io.github.hato1883.api.ModLoading;
 import io.github.hato1883.api.events.IEventListenerRegistrar;
 import io.github.hato1883.api.mod.load.ILoadedMod;
 import io.github.hato1883.api.mod.load.IModListenerScanner;
@@ -25,9 +24,11 @@ public class ClassGraphListenerScanner implements IModListenerScanner {
     private static final Logger LOGGER = LogManager.getLogger("ListenerScanner");
 
     private final IAsyncExecutionService executor;
+    private final IEventListenerRegistrar listenerRegistrar;
 
-    public ClassGraphListenerScanner(IAsyncExecutionService executor) {
+    public ClassGraphListenerScanner(IAsyncExecutionService executor, IEventListenerRegistrar listenerRegistrar) {
         this.executor = executor;
+        this.listenerRegistrar = listenerRegistrar;
     }
 
     @Override
@@ -47,7 +48,7 @@ public class ClassGraphListenerScanner implements IModListenerScanner {
                 for (Class<?> c : classes) {
                     try {
                         Object inst = c.getDeclaredConstructor().newInstance();
-                        ModLoading.listenerRegistrar().register(mod.id(), inst);
+                        listenerRegistrar.register(mod.id(), inst);
                     } catch (Throwable t) {
                         LogManager.getLogger(mod.id()).error("Failed to instantiate listener {}", c.getName(), t);
                     }

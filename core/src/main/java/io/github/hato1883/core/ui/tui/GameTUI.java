@@ -3,6 +3,7 @@ package io.github.hato1883.core.ui.tui;
 import io.github.hato1883.api.LogManager;
 import io.github.hato1883.api.Services;
 import io.github.hato1883.api.events.IEventListenerRegistrar;
+import io.github.hato1883.api.services.IServiceContainer;
 import io.github.hato1883.api.world.board.IBoard;
 import io.github.hato1883.api.ui.IUI;
 import io.github.hato1883.api.ui.TUIScreen;
@@ -22,21 +23,26 @@ public class GameTUI implements IUI {
     public static final String GAME_NAME = "Catan";
     public static final String LOGGER_ID = "";
     private static final Logger LOGGER = LogManager.getLogger(LOGGER_ID);
-    private final ModLoader loader = ModLoader.createDefault();
+    private final ModLoader loader;
+    private final IServiceContainer serviceLocator;
 
     private TUIScreen currentScreen;
+
+    public GameTUI() {
+        LOGGER.info("Register default services...");
+        ServiceBootstrap.initialize();
+        LOGGER.info("Default services have been registered");
+        loader = ModLoader.createDefault(ServiceBootstrap.getContainer());
+        serviceLocator = ServiceBootstrap.getContainer();
+    }
 
     @Override
     public void create() {
         LOGGER.info("Starting game!");
 
-        LOGGER.info("Register default services...");
-        ServiceBootstrap.initialize();
-        LOGGER.info("Default services have been registered");
-
         // Register default events
         LOGGER.info("Registering base game event Listeners...");
-        Services.require(IEventListenerRegistrar.class).registerListenersInPackage(
+        serviceLocator.get(IEventListenerRegistrar.class).orElseThrow(() -> new IllegalStateException("Required service not found: IEventListenerRegistrar")).registerListenersInPackage(
             LOGGER_ID,
             "io.github.hato1883.game.logic.listeners"
         );
@@ -75,7 +81,7 @@ public class GameTUI implements IUI {
                     System.out.println("User sent \"" + choice + "\"");
                     switch (choice) {
                         case "StartGame":
-                            setScreen(new BoardCreationTUIScreen());
+                            setScreen(new BoardCreationTUIScreen(serviceLocator));
                             break;
                         case "LoadGame":
                             // setScreen(new LoadGameTUIScreen());

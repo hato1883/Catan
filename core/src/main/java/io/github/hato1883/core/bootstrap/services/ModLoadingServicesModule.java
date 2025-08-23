@@ -1,6 +1,6 @@
 package io.github.hato1883.core.bootstrap.services;
 
-import io.github.hato1883.api.Services;
+import io.github.hato1883.api.events.IEventBusService;
 import io.github.hato1883.api.events.IEventListenerRegistrar;
 import io.github.hato1883.api.mod.load.*;
 import io.github.hato1883.api.mod.load.asset.*;
@@ -22,27 +22,54 @@ import java.util.function.Supplier;
 public class ModLoadingServicesModule implements IServiceModule {
 
     @Override
-    public void registerServices(IServiceContainer registrar) {
-        registrar.registerIfAbsent(IModDiscovery.class, (Supplier<? extends IModDiscovery>) FilesystemModDiscovery::new);
-        registrar.registerIfAbsent(IDependencyResolver.class, (Supplier<? extends IDependencyResolver>) DependencyResolver::new);
-        registrar.registerIfAbsent(IModMetadataReader.class, (Supplier<? extends IModMetadataReader>) DefaultModMetadataReader::new);
-        registrar.registerIfAbsent(IModClassLoaderFactory.class, (Supplier<? extends IModClassLoaderFactory>) () -> new UrlModClassLoaderFactory(ModLoader.class.getClassLoader()));
-        registrar.registerIfAbsent(IModListenerScanner.class, (Supplier<? extends IModListenerScanner>) () -> new ClassGraphListenerScanner(Services.require(IAsyncExecutionService.class)));
-        registrar.registerIfAbsent(IEventListenerRegistrar.class, (Supplier<? extends IEventListenerRegistrar>) EventListenerRegistrar::new);
-        registrar.registerIfAbsent(IRegistryLoader.class, (Supplier<? extends IRegistryLoader>) DefaultRegistryLoader::new);
-        registrar.registerIfAbsent(IModAssetLoader.class, (Supplier<? extends IModAssetLoader>) () -> {
-                return new ModTextureModAssetLoader(
+    public void registerServices(IServiceContainer serviceContainer) {
+        serviceContainer.registerIfAbsent(
+            IModDiscovery.class,
+            (Supplier<? extends IModDiscovery>) FilesystemModDiscovery::new
+        );
+        serviceContainer.registerIfAbsent(
+            IDependencyResolver.class,
+            (Supplier<? extends IDependencyResolver>) DependencyResolver::new
+        );
+        serviceContainer.registerIfAbsent(
+            IModMetadataReader.class,
+            (Supplier<? extends IModMetadataReader>) DefaultModMetadataReader::new
+        );
+        serviceContainer.registerIfAbsent(
+            IModClassLoaderFactory.class,
+            (Supplier<? extends IModClassLoaderFactory>) () -> new UrlModClassLoaderFactory(
+                ModLoader.class.getClassLoader()
+            )
+        );
+        serviceContainer.registerIfAbsent(
+            IModListenerScanner.class,
+            (Supplier<? extends IModListenerScanner>) () -> new ClassGraphListenerScanner(
+                serviceContainer.require(IAsyncExecutionService.class),
+                serviceContainer.require(IEventListenerRegistrar.class)
+            )
+        );
+        serviceContainer.registerIfAbsent(
+            IEventListenerRegistrar.class,
+            (Supplier<? extends IEventListenerRegistrar>) () -> new EventListenerRegistrar(
+                serviceContainer.require(IEventBusService.class)
+            )
+        );
+        serviceContainer.registerIfAbsent(
+            IRegistryLoader.class,
+            (Supplier<? extends IRegistryLoader>) DefaultRegistryLoader::new
+        );
+        serviceContainer.registerIfAbsent(IModAssetLoader.class, (Supplier<? extends IModAssetLoader>) () ->
+                new ModTextureModAssetLoader(
                     new CombinedTextureDiscoveryService(),
                     new DefaultTextureAtlasBuilder(AssetConfig.defaultConfig()),
                     PathResolver.getGameDataDir().resolve("assets").resolve("textures")
-                );
-            }
+                )
         );
-        registrar.registerIfAbsent(IModInitializer.class, (Supplier<? extends IModInitializer>) DefaultModInitializer::new);
+        serviceContainer.registerIfAbsent(IModInitializer.class, (Supplier<? extends IModInitializer>) DefaultModInitializer::new);
 
         // Add other game logic services as they're created
-        // registrar.registerIfAbsent(IGameEngine.class, GameEngine::new);
-        // registrar.registerIfAbsent(IPlayerManager.class, PlayerManager::new);
+        // serviceContainer.registerIfAbsent(IGameEngine.class, GameEngine::new);
+        // serviceContainer.registerIfAbsent(IPlayerManager.class, PlayerManager::new);
     }
 
     @Override

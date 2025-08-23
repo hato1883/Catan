@@ -3,6 +3,7 @@ package io.github.hato1883.core.ui.gui;
 import com.badlogic.gdx.Game;
 import io.github.hato1883.api.*;
 import io.github.hato1883.api.events.IEventListenerRegistrar;
+import io.github.hato1883.api.services.IServiceContainer;
 import io.github.hato1883.api.ui.screen.IScreenManager;
 import io.github.hato1883.api.ui.screen.ScreenRegistry;
 import io.github.hato1883.core.modloading.loading.ModLoader;
@@ -12,14 +13,12 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.Random;
+import io.github.hato1883.api.services.IServiceLocator;
 
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class GameGUIMain extends Game {
 
-    static {
-        Logger LOGGER = LogManager.getLogger("");
-    }
     public static final String GAME_NAME = "Catan";
     public static final String LOGGER_ID = "";
     private static final Logger LOGGER = LogManager.getLogger(LOGGER_ID);
@@ -40,15 +39,16 @@ public class GameGUIMain extends Game {
 
         LOGGER.info("Register default services...");
         ServiceBootstrap.initialize();
+        IServiceContainer serviceLocator = ServiceBootstrap.getContainer();
         LOGGER.info("Default services have been registered");
 
         LOGGER.info("Setting up Mod Loader...");
-        loader = ModLoader.createDefault();
+        loader = ModLoader.createDefault(serviceLocator);
         LOGGER.info("Mod Loader setup completed");
 
         // Register default events
         LOGGER.info("Registering base game event Listeners...");
-        Services.require(IEventListenerRegistrar.class).registerListenersInPackage(
+        serviceLocator.get(IEventListenerRegistrar.class).orElseThrow(() -> new IllegalStateException("Required service not found: IEventListenerRegistrar")).registerListenersInPackage(
             LOGGER_ID,
             "io.github.hato1883.game.logic.listeners"
         );
@@ -63,8 +63,8 @@ public class GameGUIMain extends Game {
         }
         LOGGER.info("All Catan mods have been loaded!");
 
-        screenRegistry = Services.require(ScreenRegistry.class);
-        screenManager = Services.require(IScreenManager.class);
+        screenRegistry = serviceLocator.get(ScreenRegistry.class).orElseThrow(() -> new IllegalStateException("Required service not found: ScreenRegistry"));
+        screenManager = serviceLocator.get(IScreenManager.class).orElseThrow(() -> new IllegalStateException("Required service not found: IScreenManager"));
         screenManager.showDefaultScreen();
     }
 

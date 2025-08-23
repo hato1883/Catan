@@ -12,6 +12,10 @@ import io.github.hato1883.api.registries.IBoardTypeRegistry;
 
 public class BoardTypeRegistry extends Registry<IBoardType> implements IBoardTypeRegistry {
 
+    public BoardTypeRegistry(io.github.hato1883.api.events.IEventBusService eventBus) {
+        super(eventBus);
+    }
+
     @Override
     protected RegistryRegisterEvent<IBoardType> createRegistryRegisterEvent(Identifier id, IBoardType element) {
         return new BoardTypeRegisterEvent(this, id, element);

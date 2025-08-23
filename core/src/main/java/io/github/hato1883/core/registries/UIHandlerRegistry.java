@@ -15,6 +15,10 @@ import java.util.*;
  * All processing should be done before this event is fired; handlers should only render.
  */
 public class UIHandlerRegistry extends Registry<IEventListener<UIRenderEvent>> implements IUIHandlerRegistry {
+    public UIHandlerRegistry(io.github.hato1883.api.events.IEventBusService eventBus) {
+        super(eventBus);
+    }
+
     @Override
     public List<IEventListener<UIRenderEvent>> getHandlersForEvent() {
         return new ArrayList<>(getAll());

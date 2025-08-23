@@ -2,6 +2,7 @@ package io.github.hato1883.core.registries;
 
 import io.github.hato1883.api.Identifier;
 import io.github.hato1883.api.Services;
+import io.github.hato1883.api.events.IEventBusService;
 import io.github.hato1883.api.events.registry.RegistryRegisterEvent;
 import io.github.hato1883.api.events.registry.RegistryReplaceEvent;
 import io.github.hato1883.api.events.registry.RegistryUnregisterEvent;
@@ -21,7 +22,10 @@ public class TileTypeRegistry extends Registry<ITileType> implements ITileTypeRe
 
     private ITileTypeFactory factory;
 
-    public TileTypeRegistry() {}
+    public TileTypeRegistry(IEventBusService eventBus, ITileTypeFactory factory) {
+        super(eventBus);
+        this.factory = factory;
+    }
 
     /**
      * Allows core to inject a custom factory if needed.
@@ -51,8 +55,6 @@ public class TileTypeRegistry extends Registry<ITileType> implements ITileTypeRe
 
     @Override
     public void register(@NotNull Identifier id, Map<IResourceType, Integer> baseProduction) {
-        if (factory == null)
-            factory = Services.require(ITileTypeFactory.class);
         ITileType tileType = factory.create(id, baseProduction);
         register(id, tileType);
     }

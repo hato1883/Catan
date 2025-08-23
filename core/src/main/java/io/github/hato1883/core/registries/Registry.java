@@ -1,7 +1,7 @@
 package io.github.hato1883.core.registries;
 
-import io.github.hato1883.api.Events;
 import io.github.hato1883.api.Identifier;
+import io.github.hato1883.api.events.IEventBusService;
 import io.github.hato1883.api.events.registry.RegistryRegisterEvent;
 import io.github.hato1883.api.events.registry.RegistryReplaceEvent;
 import io.github.hato1883.api.events.registry.RegistryUnregisterEvent;
@@ -11,6 +11,11 @@ import java.util.*;
 
 abstract class Registry<T> implements IRegistry<T> {
     private final Map<Identifier, T> entries = new HashMap<>();
+    private final IEventBusService eventBus;
+
+    protected Registry(IEventBusService eventBus) {
+        this.eventBus = Objects.requireNonNull(eventBus, "eventBus must not be null");
+    }
 
     @Override
     public T register(Identifier id, T element) {
@@ -20,7 +25,7 @@ abstract class Registry<T> implements IRegistry<T> {
 
         // Fire pre-register event
         RegistryRegisterEvent<T> event = createRegistryRegisterEvent(id, element);
-        Events.post(event);
+        eventBus.dispatch(event);
         if (event.isCanceled()) return null;
 
         // Register element to id
@@ -38,7 +43,7 @@ abstract class Registry<T> implements IRegistry<T> {
 
         // Fire pre-replace event
         RegistryReplaceEvent<T> event = createRegistryReplaceEvent(id, entries.get(id), element);
-        Events.post(event);
+        eventBus.dispatch(event);
         if (event.isCanceled()) return;
 
         // Register element to id
@@ -69,7 +74,7 @@ abstract class Registry<T> implements IRegistry<T> {
         if (entries.containsKey(id)) {
             // Fire pre-unregister event
             RegistryUnregisterEvent<T> event = createRegistryUnregisterEvent(id, entries.get(id));
-            Events.post(event);
+            eventBus.dispatch(event);
             if (event.isCanceled()) return false;
 
             entries.remove(id);

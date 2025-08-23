@@ -1,6 +1,5 @@
 package io.github.hato1883.core.modloading.loading;
 
-import io.github.hato1883.api.ModLoading;
 import io.github.hato1883.api.mod.CatanMod;
 import io.github.hato1883.api.LogManager;
 import io.github.hato1883.api.mod.load.*;
@@ -8,6 +7,7 @@ import io.github.hato1883.api.mod.load.ModMetadata;
 import io.github.hato1883.api.mod.load.asset.IModAssetLoader;
 import io.github.hato1883.api.mod.load.dependency.IDependencyResolver;
 import io.github.hato1883.api.mod.load.dependency.ModDependencyException;
+import io.github.hato1883.api.services.IServiceLocator;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -36,16 +36,16 @@ public class ModLoader {
     /**
      * Production factory: uses ModLoading facade for all dependencies.
      */
-    public static ModLoader createDefault() {
+    public static <T> ModLoader createDefault(IServiceLocator serviceLocator) {
         return new ModLoader(
-            ModLoading.discovery(),
-            ModLoading.dependencyResolver(),
-            ModLoading.metadataReader(),
-            ModLoading.classLoaderFactory(),
-            ModLoading.listenerScanner(),
-            ModLoading.registryLoader(),
-            ModLoading.modAssetLoader(),
-            ModLoading.initializer()
+            serviceLocator.require(IModDiscovery.class),
+            serviceLocator.require(IDependencyResolver.class),
+            serviceLocator.require(IModMetadataReader.class),
+            serviceLocator.require(IModClassLoaderFactory.class),
+            serviceLocator.require(IModListenerScanner.class),
+            serviceLocator.require(IRegistryLoader.class),
+            serviceLocator.require(IModAssetLoader.class),
+            serviceLocator.require(IModInitializer.class)
         );
     }
 
@@ -70,24 +70,6 @@ public class ModLoader {
         this.registryLoader = registryLoader;
         this.modAssetLoader = modAssetLoader;
         this.initializer = initializer;
-    }
-
-    // Legacy default constructor for backward compatibility (deprecated)
-    /**
-     * @deprecated Use ModLoader.createDefault() or inject dependencies directly.
-     */
-    @Deprecated
-    public ModLoader() {
-        this(
-            ModLoading.discovery(),
-            ModLoading.dependencyResolver(),
-            ModLoading.metadataReader(),
-            ModLoading.classLoaderFactory(),
-            ModLoading.listenerScanner(),
-            ModLoading.registryLoader(),
-            ModLoading.modAssetLoader(),
-            ModLoading.initializer()
-        );
     }
 
     /**

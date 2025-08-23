@@ -1,15 +1,20 @@
 package io.github.hato1883.core.ui.tui.screen;
 
 import io.github.hato1883.api.Identifier;
-import io.github.hato1883.api.Services;
 import io.github.hato1883.api.world.board.IBoard;
 import io.github.hato1883.api.world.board.IBoardGenerator;
+import io.github.hato1883.api.services.IServiceLocator;
 import io.github.hato1883.core.ui.tui.TUIInput;
 
 public class BoardCreationTUIScreen extends BaseTUIScreen {
     private volatile boolean finished = false;
     private IBoard board;
     private String selectedOption;
+    private final IServiceLocator serviceLocator;
+
+    public BoardCreationTUIScreen(IServiceLocator serviceLocator) {
+        this.serviceLocator = serviceLocator;
+    }
 
     @Override
     public void onShow() {
@@ -28,13 +33,13 @@ public class BoardCreationTUIScreen extends BaseTUIScreen {
                 switch (input) {
                     case "1":
                         selectedOption = "basemod:classic_hex";
-                        boardGenerator = Services.require(IBoardGenerator.class);
+                        boardGenerator = serviceLocator.get(IBoardGenerator.class).orElseThrow(() -> new IllegalStateException("Required service not found: IBoardGenerator"));
                         board = boardGenerator.generateBoard(Identifier.of(selectedOption), null); // your board creation logic
                         finished = true;
                         break;
                     case "2":
                         selectedOption = "basemod:donut";
-                        boardGenerator = Services.require(IBoardGenerator.class);
+                        boardGenerator = serviceLocator.get(IBoardGenerator.class).orElseThrow(() -> new IllegalStateException("Required service not found: IBoardGenerator"));
                         board = boardGenerator.generateBoard(Identifier.of(selectedOption), null);
                         finished = true;
                         break;

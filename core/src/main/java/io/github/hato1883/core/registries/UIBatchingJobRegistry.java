@@ -11,6 +11,10 @@ import io.github.hato1883.api.registries.IUIBatchingJobRegistry;
  * Concrete registry for mod UI batching jobs. Each job reserves a batch for exclusive use during rendering.
  */
 public class UIBatchingJobRegistry extends Registry<IBatchingJob> implements IUIBatchingJobRegistry {
+    public UIBatchingJobRegistry(io.github.hato1883.api.events.IEventBusService eventBus) {
+        super(eventBus);
+    }
+
     @Override
     protected RegistryRegisterEvent<IBatchingJob> createRegistryRegisterEvent(Identifier id, IBatchingJob element) {
         return new RegistryRegisterEvent<>(this, id, element);

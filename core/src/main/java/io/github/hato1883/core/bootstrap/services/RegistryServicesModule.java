@@ -1,5 +1,7 @@
 package io.github.hato1883.core.bootstrap.services;
 
+import io.github.hato1883.api.events.IEventBusService;
+import io.github.hato1883.api.factories.ITileTypeFactory;
 import io.github.hato1883.api.registries.*;
 import io.github.hato1883.api.services.IServiceContainer;
 import io.github.hato1883.api.services.IServiceModule;
@@ -22,21 +24,54 @@ public class RegistryServicesModule implements IServiceModule {
         return "RegistryServices";
     }
 
-    private void registerGameRegistries(IServiceRegistrar registrar) {
-        registrar.registerIfAbsent(IBoardTypeRegistry.class, (Supplier<? extends IBoardTypeRegistry>) BoardTypeRegistry::new);
-        registrar.registerIfAbsent(IBuildingTypeRegistry.class, (Supplier<? extends IBuildingTypeRegistry>) BuildingTypeRegistry::new);
-        registrar.registerIfAbsent(IGamePhaseRegistry.class, (Supplier<? extends IGamePhaseRegistry>) GamePhaseRegistry::new);
-        registrar.registerIfAbsent(IPortTypeRegistry.class, (Supplier<? extends IPortTypeRegistry>) PortTypeRegistry::new);
+    private void registerGameRegistries(IServiceContainer registrar) {
+        registrar.registerIfAbsent(
+            IBoardTypeRegistry.class, (Supplier<? extends IBoardTypeRegistry>) () -> new BoardTypeRegistry(
+                registrar.require(IEventBusService.class)
+            )
+        );
+        registrar.registerIfAbsent(
+            IBuildingTypeRegistry.class, (Supplier<? extends IBuildingTypeRegistry>) () -> new BuildingTypeRegistry(
+                registrar.require(IEventBusService.class)
+            )
+        );
+        registrar.registerIfAbsent(
+            IGamePhaseRegistry.class, (Supplier<? extends IGamePhaseRegistry>) () -> new GamePhaseRegistry(
+                registrar.require(IEventBusService.class)
+            )
+        );
+        registrar.registerIfAbsent(
+            IPortTypeRegistry.class, (Supplier<? extends IPortTypeRegistry>) () -> new PortTypeRegistry(
+                registrar.require(IEventBusService.class)
+            )
+        );
     }
 
-    private void registerUIRegistries(IServiceRegistrar registrar) {
-        registrar.registerIfAbsent(IUIBatchingJobRegistry.class, (Supplier<? extends IUIBatchingJobRegistry>) UIBatchingJobRegistry::new);
+    private void registerUIRegistries(IServiceContainer registrar) {
+        registrar.registerIfAbsent(
+            IUIBatchingJobRegistry.class, (Supplier<? extends IUIBatchingJobRegistry>) () -> new UIBatchingJobRegistry(
+                registrar.require(IEventBusService.class)
+            )
+        );
         // Add other UI-related registries here as needed
     }
 
-    private void registerTypeRegistries(IServiceRegistrar registrar) {
-        registrar.registerIfAbsent(IResourceTypeRegistry.class, (Supplier<? extends IResourceTypeRegistry>) ResourceTypeRegistry::new);
-        registrar.registerIfAbsent(IRoadTypeRegistry.class, (Supplier<? extends IRoadTypeRegistry>) RoadTypeRegistry::new);
-        registrar.registerIfAbsent(ITileTypeRegistry.class, (Supplier<? extends ITileTypeRegistry>) TileTypeRegistry::new);
+    private void registerTypeRegistries(IServiceContainer registrar) {
+        registrar.registerIfAbsent(
+            IResourceTypeRegistry.class, (Supplier<? extends IResourceTypeRegistry>) () -> new ResourceTypeRegistry(
+                registrar.require(IEventBusService.class)
+            )
+        );
+        registrar.registerIfAbsent(
+            IRoadTypeRegistry.class, (Supplier<? extends IRoadTypeRegistry>) () -> new RoadTypeRegistry(
+                registrar.require(IEventBusService.class)
+            )
+        );
+        registrar.registerIfAbsent(
+            ITileTypeRegistry.class, (Supplier<? extends ITileTypeRegistry>) () -> new TileTypeRegistry(
+                registrar.require(IEventBusService.class),
+                registrar.require(ITileTypeFactory.class)
+            )
+        );
     }
 }

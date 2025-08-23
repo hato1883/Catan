@@ -1,7 +1,7 @@
 package io.github.hato1883.core.world.board;
 
 import io.github.hato1883.api.Identifier;
-import io.github.hato1883.api.Registries;
+import io.github.hato1883.api.registries.IBoardTypeRegistry;
 import io.github.hato1883.api.world.board.*;
 import java.util.*;
 
@@ -11,7 +11,11 @@ import java.util.*;
  */
 public class DefaultBoardGenerator implements IBoardGenerator {
 
-    public DefaultBoardGenerator() { }
+    private final IBoardTypeRegistry boardRegistry;
+
+    public DefaultBoardGenerator(IBoardTypeRegistry boardRegistry) {
+        this.boardRegistry = boardRegistry;
+    }
 
     @Override
     public IBoard generateBoard(IBoardType type, BoardGenerationConfig config, Random rng) {
@@ -40,7 +44,7 @@ public class DefaultBoardGenerator implements IBoardGenerator {
 
     @Override
     public IBoard generateBoard(Identifier id, BoardGenerationConfig config, Random rng) {
-        IBoardType type = Registries.boards().require(id);
+        IBoardType type = boardRegistry.require(id);
         return generateBoard(type, config, rng);
     }
 
