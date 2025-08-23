@@ -1,0 +1,25 @@
+// This is the mod metadata file for Base Catan Mod
+// You can add comments anywhere in HJSON!
+{
+  // Our mod's unique identifier
+  id: "basemod",
+
+  // The human-readable name of our mod
+  name: "Base Catan Mod",
+
+  // The version of our mod following semantic versioning, see https://semver.org/
+  version: "1.0.0",
+
+  // A brief description of our mod
+  description: "Adds the default catan game",
+
+  // The load priorty of our mod, can be LOW, NORMAL, or HIGH
+  loadPriority: "NORMAL",
+
+  // The main class of our mod, this is where the mod will start executing
+  entrypoint: "io.github.hato1883.basemod.BaseModMain",
+
+  // The list of mod ids that this mod depends on
+  dependencies: [],
+}
+

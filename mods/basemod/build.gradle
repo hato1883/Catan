@@ -16,25 +16,26 @@ dependencies {
   compileOnly project(':mod-api')
   runtimeOnly project(':core')
   implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+  // Jackson for JSON5-like parsing
+  implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+  implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+  implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
 }
 
-import groovy.json.JsonSlurper
+// Read modid and version from catan.mod.json5
+import java.util.regex.Pattern
 
-def modJson = new JsonSlurper().parse(file("$projectDir/src/main/resources/catan.mod.json"))
+def modJsonFile = file("src/main/resources/catan.mod.json5")
+def modJsonText = modJsonFile.text
 
-version = modJson.version
+def modidMatcher = modJsonText =~ /id\s*:\s*"([^"]+)"/
+def versionMatcher = modJsonText =~ /version\s*:\s*"([^"]+)"/
+
+def modid = modidMatcher ? modidMatcher[0][1] : 'unknownmod'
+def modVersion = versionMatcher ? versionMatcher[0][1] : '0.0.0'
 
 jar {
-  archiveBaseName.set('catan-base-mod')
-
-  /*
-  Include mod descriptor in jar root
-    from('src/main/resources') {
-      include 'catan.mod.json'
-      into '/'
-    }
-  */
-
-
-
+    archiveBaseName.set(modid)
+    archiveVersion.set(modVersion)
+    archiveFileName.set("${modid}-${modVersion}.jar")
 }

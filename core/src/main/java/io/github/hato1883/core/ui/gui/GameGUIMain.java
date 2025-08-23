@@ -43,7 +43,7 @@ public class GameGUIMain extends Game {
         LOGGER.info("Default services have been registered");
 
         LOGGER.info("Setting up Mod Loader...");
-        loader = new ModLoader();
+        loader = ModLoader.createDefault();
         LOGGER.info("Mod Loader setup completed");
 
         // Register default events

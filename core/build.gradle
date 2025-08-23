@@ -10,7 +10,11 @@ dependencies {
   implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 
   implementation 'com.google.code.gson:gson:2.10.1'
-  implementation 'io.github.classgraph:classgraph:4.8.157'  // or latest version
+  implementation 'io.github.classgraph:classgraph:4.8.157'
+  // Jackson for JSON5-like parsing
+  implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+  implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+  implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"

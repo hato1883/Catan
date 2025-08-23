@@ -1,7 +1,6 @@
 package io.github.hato1883.core.modloading.assets;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.hato1883.api.mod.load.asset.TextureEntry;
 
 import java.io.IOException;
@@ -22,11 +21,12 @@ public record AtlasCacheInfo(
     String category,
     int lod
 ) {
+    private static final ObjectMapper JACKSON = new ObjectMapper();
 
     public static AtlasCacheInfo load(Path jsonPath) throws IOException {
         if (Files.exists(jsonPath)) {
             String content = Files.readString(jsonPath);
-            return new Gson().fromJson(content, AtlasCacheInfo.class);
+            return JACKSON.readValue(content, AtlasCacheInfo.class);
         }
         return null;
     }
@@ -44,7 +44,8 @@ public record AtlasCacheInfo(
             ));
 
         AtlasCacheInfo info = new AtlasCacheInfo(modVersions, texIds, hashes, category, lod);
-        Files.writeString(jsonPath, new GsonBuilder().setPrettyPrinting().create().toJson(info));
+        String json = JACKSON.writerWithDefaultPrettyPrinter().writeValueAsString(info);
+        Files.writeString(jsonPath, json);
     }
 
     /** Check if cache matches current mods and textures */
@@ -74,5 +75,3 @@ public record AtlasCacheInfo(
         }
     }
 }
-
-

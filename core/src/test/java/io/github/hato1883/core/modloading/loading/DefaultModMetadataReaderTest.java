@@ -57,7 +57,7 @@ class DefaultModMetadataReaderTest {
               "entrypoint": "com.example.Main"
             }
             """;
-        Path metadataFile = tempDir.resolve("catan.mod.json");
+        Path metadataFile = tempDir.resolve("catan.mod.json5");
         Files.write(metadataFile, json.getBytes());
         ModMetadata metadata = reader.readMetadata(tempDir);
         assertEquals("testmod", metadata.id());
@@ -73,7 +73,7 @@ class DefaultModMetadataReaderTest {
     @Test
     @DisplayName("Should throw IOException if catan.mod.json is missing")
     void testMissingMetadataFileThrows() {
-        Exception ex = assertThrows(IOException.class, () -> reader.readMetadata(tempDir));
+        Exception ex = assertThrows(ModMetadataParseException.class, () -> reader.readMetadata(tempDir));
         assertTrue(ex.getMessage().contains("Metadata file not found"));
     }
 
@@ -85,10 +85,10 @@ class DefaultModMetadataReaderTest {
     @Test
     @DisplayName("Should throw ModMetadataParseException for invalid JSON")
     void testInvalidJsonThrows() throws IOException {
-        Path metadataFile = tempDir.resolve("catan.mod.json");
+        Path metadataFile = tempDir.resolve("catan.mod.json5");
         Files.write(metadataFile, "not a json".getBytes());
         Exception ex = assertThrows(ModMetadataParseException.class, () -> reader.readMetadata(tempDir));
-        assertTrue(ex.getMessage().contains("Failed to parse metadata"));
+        assertTrue(ex.getMessage().contains("JSON5-like syntax error"));
     }
 
     /**
@@ -111,7 +111,7 @@ class DefaultModMetadataReaderTest {
               ]
             }
             """;
-        Path metadataFile = tempDir.resolve("catan.mod.json");
+        Path metadataFile = tempDir.resolve("catan.mod.json5");
         Files.write(metadataFile, json.getBytes());
         ModMetadata metadata = reader.readMetadata(tempDir);
         assertEquals("moda", metadata.id());
@@ -128,5 +128,146 @@ class DefaultModMetadataReaderTest {
         var dep3 = metadata.dependencies().get(2);
         assertEquals("modd", dep3.modId());
         assertFalse(dep3.optional()); // default is false
+    }
+
+    /**
+     * Tests that JSON5 formatted metadata is correctly parsed, including support for comments and trailing commas.
+     * <p>
+     * Edge case: Verifies that the parser can handle JSON5 features and still extract metadata correctly.
+     */
+    @Test
+    @DisplayName("Should parse JSON5 with comments and trailing commas")
+    void testReadJson5WithCommentsAndTrailingCommas() throws IOException {
+        String json5 = """
+            // Mod metadata with comments and trailing commas
+            {
+              id: 'json5mod', // single quotes and comment
+              name: "JSON5 Mod", // double quotes
+              version: "1.2.3",
+              entrypoint: "com.example.Json5Main",
+              dependencies: [
+                // Dependency with caret version
+                { id: 'foo', version: '^1.0.0' },
+                // Dependency with tilde version
+                { id: 'bar', version: '~2.1.0', },
+                // Dependency with range
+                { id: 'baz', version: '[1.0.0, 2.0.0)', },
+                // Dependency with exact version
+                { id: 'qux', version: '3.2.1', },
+              ], // trailing comma
+            }
+            """;
+        Path metadataFile = tempDir.resolve("catan.mod.json5");
+        Files.writeString(metadataFile, json5);
+        ModMetadata metadata = reader.readMetadata(tempDir);
+        assertEquals("json5mod", metadata.id());
+        assertEquals("JSON5 Mod", metadata.name());
+        assertEquals("1.2.3", metadata.version());
+        assertEquals("com.example.Json5Main", metadata.entrypoint());
+        assertNotNull(metadata.dependencies());
+        assertEquals(4, metadata.dependencies().size());
+        assertEquals("foo", metadata.dependencies().get(0).modId());
+        assertEquals("^1.0.0", metadata.dependencies().get(0).versionConstraint().toString());
+        assertEquals("bar", metadata.dependencies().get(1).modId());
+        assertEquals("~2.1.0", metadata.dependencies().get(1).versionConstraint().toString());
+        assertEquals("baz", metadata.dependencies().get(2).modId());
+        assertEquals("[1.0.0, 2.0.0)", metadata.dependencies().get(2).versionConstraint().toString());
+        assertEquals("qux", metadata.dependencies().get(3).modId());
+        assertEquals("3.2.1", metadata.dependencies().get(3).versionConstraint().toString());
+    }
+
+    /**
+     * Tests that minimal valid JSON5 metadata is parsed correctly, ignoring comments.
+     * <p>
+     * Edge case: Ensures that the absence of optional fields and presence of comments does not affect parsing.
+     */
+    @Test
+    @DisplayName("Should ignore comments and parse minimal valid JSON5")
+    void testReadMinimalJson5WithComments() throws IOException {
+        String json5 = """
+            // Minimal mod metadata with comments
+            {
+              id: "minmod", // mod id
+              version: "0.1.0", // version
+              entrypoint: "com.example.MinMain" // entrypoint
+            }
+            """;
+        Path metadataFile = tempDir.resolve("catan.mod.json5");
+        Files.writeString(metadataFile, json5);
+        ModMetadata metadata = reader.readMetadata(tempDir);
+        assertEquals("minmod", metadata.id());
+        assertEquals("0.1.0", metadata.version());
+        assertEquals("com.example.MinMain", metadata.entrypoint());
+    }
+
+    /**
+     * Tests that invalid JSON5 syntax results in a ModMetadataParseException being thrown.
+     * <p>
+     * Edge case: Verifies that the parser correctly identifies and reports syntax errors in JSON5.
+     */
+    @Test
+    @DisplayName("Should throw on invalid JSON5 syntax")
+    void testInvalidJson5Throws() throws IOException {
+        String invalidJson5 = """
+            // Missing closing brace
+            {
+              id: "badmod",
+              version: "1.0.0",
+              entrypoint: "com.example.BadMain"
+            """;
+        Path metadataFile = tempDir.resolve("catan.mod.json5");
+        Files.writeString(metadataFile, invalidJson5);
+        assertThrows(ModMetadataParseException.class, () -> reader.readMetadata(tempDir));
+    }
+
+    /**
+     * Tests that missing required field 'id' in JSON5 metadata results in a ModMetadataParseException.
+     */
+    @Test
+    @DisplayName("Should throw on missing required field: id")
+    void testMissingIdFieldThrows() throws IOException {
+        String json5 = """
+            {
+              version: "1.0.0",
+              entrypoint: "com.example.Main"
+            }
+            """;
+        Path metadataFile = tempDir.resolve("catan.mod.json5");
+        Files.writeString(metadataFile, json5);
+        assertThrows(ModMetadataParseException.class, () -> reader.readMetadata(tempDir));
+    }
+
+    /**
+     * Tests that missing required field 'version' in JSON5 metadata results in a ModMetadataParseException.
+     */
+    @Test
+    @DisplayName("Should throw on missing required field: version")
+    void testMissingVersionFieldThrows() throws IOException {
+        String json5 = """
+            {
+              id: "testmod",
+              entrypoint: "com.example.Main"
+            }
+            """;
+        Path metadataFile = tempDir.resolve("catan.mod.json5");
+        Files.writeString(metadataFile, json5);
+        assertThrows(ModMetadataParseException.class, () -> reader.readMetadata(tempDir));
+    }
+
+    /**
+     * Tests that missing required field 'entrypoint' in JSON5 metadata results in a ModMetadataParseException.
+     */
+    @Test
+    @DisplayName("Should throw on missing required field: entrypoint")
+    void testMissingEntrypointFieldThrows() throws IOException {
+        String json5 = """
+            {
+              id: "testmod",
+              version: "1.0.0"
+            }
+            """;
+        Path metadataFile = tempDir.resolve("catan.mod.json5");
+        Files.writeString(metadataFile, json5);
+        assertThrows(ModMetadataParseException.class, () -> reader.readMetadata(tempDir));
     }
 }

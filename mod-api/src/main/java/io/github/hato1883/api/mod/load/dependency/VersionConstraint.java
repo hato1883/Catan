@@ -226,7 +226,7 @@ public interface VersionConstraint {
 
         @Override
         public @NotNull String toString() {
-            return (minInclusive ? "[" : "(") + (minVersion != null ? minVersion : "") + "," + (maxVersion != null ? maxVersion : "") + (maxInclusive ? "]" : ")");
+            return (minInclusive ? "[" : "(") + (minVersion != null ? minVersion : "") + ", " + (maxVersion != null ? maxVersion : "") + (maxInclusive ? "]" : ")");
         }
     }
 }

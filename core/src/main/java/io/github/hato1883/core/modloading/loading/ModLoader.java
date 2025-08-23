@@ -5,6 +5,8 @@ import io.github.hato1883.api.mod.CatanMod;
 import io.github.hato1883.api.LogManager;
 import io.github.hato1883.api.mod.load.*;
 import io.github.hato1883.api.mod.load.ModMetadata;
+import io.github.hato1883.api.mod.load.asset.IModAssetLoader;
+import io.github.hato1883.api.mod.load.dependency.IDependencyResolver;
 import io.github.hato1883.api.mod.load.dependency.ModDependencyException;
 import org.slf4j.Logger;
 
@@ -22,14 +24,78 @@ public class ModLoader {
 
     private static final Logger LOGGER = LogManager.getLogger("ModLoading");
 
-    public ModLoader() {}
+    private final IModDiscovery discovery;
+    private final IDependencyResolver dependencyResolver;
+    private final IModMetadataReader metadataReader;
+    private final IModClassLoaderFactory classLoaderFactory;
+    private final IModListenerScanner listenerScanner;
+    private final IRegistryLoader registryLoader;
+    private final IModAssetLoader modAssetLoader;
+    private final IModInitializer initializer;
+
+    /**
+     * Production factory: uses ModLoading facade for all dependencies.
+     */
+    public static ModLoader createDefault() {
+        return new ModLoader(
+            ModLoading.discovery(),
+            ModLoading.dependencyResolver(),
+            ModLoading.metadataReader(),
+            ModLoading.classLoaderFactory(),
+            ModLoading.listenerScanner(),
+            ModLoading.registryLoader(),
+            ModLoading.modAssetLoader(),
+            ModLoading.initializer()
+        );
+    }
+
+    /**
+     * Dependency-injection constructor for testability.
+     */
+    public ModLoader(
+        IModDiscovery discovery,
+        IDependencyResolver dependencyResolver,
+        IModMetadataReader metadataReader,
+        IModClassLoaderFactory classLoaderFactory,
+        IModListenerScanner listenerScanner,
+        IRegistryLoader registryLoader,
+        IModAssetLoader modAssetLoader,
+        IModInitializer initializer
+    ) {
+        this.discovery = discovery;
+        this.dependencyResolver = dependencyResolver;
+        this.metadataReader = metadataReader;
+        this.classLoaderFactory = classLoaderFactory;
+        this.listenerScanner = listenerScanner;
+        this.registryLoader = registryLoader;
+        this.modAssetLoader = modAssetLoader;
+        this.initializer = initializer;
+    }
+
+    // Legacy default constructor for backward compatibility (deprecated)
+    /**
+     * @deprecated Use ModLoader.createDefault() or inject dependencies directly.
+     */
+    @Deprecated
+    public ModLoader() {
+        this(
+            ModLoading.discovery(),
+            ModLoading.dependencyResolver(),
+            ModLoading.metadataReader(),
+            ModLoading.classLoaderFactory(),
+            ModLoading.listenerScanner(),
+            ModLoading.registryLoader(),
+            ModLoading.modAssetLoader(),
+            ModLoading.initializer()
+        );
+    }
 
     /**
      * Full lifecycle: discover -> load -> scan listeners -> register content -> load assets -> initialize
      */
     public List<ILoadedMod> loadAll(Path modsDir) throws IOException {
         LOGGER.info("Finding all mods...");
-        List<Path> modPaths = ModLoading.discovery().discoverMods(modsDir);
+        List<Path> modPaths = discovery.discoverMods(modsDir);
 
         LOGGER.info("Loading mod metadata...");
         Map<ModMetadata, Path> modData = readAllMetadata(modPaths);
@@ -37,7 +103,7 @@ public class ModLoader {
         LOGGER.info("Fixing Mod Loading order....");
         Map<ModMetadata, Path> loadOrder = Map.of();
         try {
-            loadOrder = ModLoading.dependencyResolver().resolveLoadOrder(modData);
+            loadOrder = dependencyResolver.resolveLoadOrder(modData);
         } catch (Exception ex) {
             LOGGER.error("Mod loading failed due to dependency issues.");
 
@@ -57,16 +123,16 @@ public class ModLoader {
         List<ILoadedMod> loaded = createModInstances(loadOrder);
 
         LOGGER.info("Scanning and registering listeners...");
-        ModLoading.listenerScanner().scanAndRegister(loaded);
+        listenerScanner.scanAndRegister(loaded);
 
         LOGGER.info("Registering mod content...");
-        ModLoading.registryLoader().loadRegistries(loaded);
+        registryLoader.loadRegistries(loaded);
 
         LOGGER.info("Loading mod assets...");
-        ModLoading.modAssetLoader().loadAssets(loaded);
+        modAssetLoader.loadAssets(loaded);
 
         LOGGER.info("Initializing mods...");
-        ModLoading.initializer().initializeAll(loaded);
+        initializer.initializeAll(loaded);
 
         return List.copyOf(loaded);
     }
@@ -75,7 +141,7 @@ public class ModLoader {
         Map<ModMetadata, Path> metadataMap = new HashMap<>();
         for (Path p : modPaths) {
             try {
-                ModMetadata meta = ModLoading.metadataReader().readMetadata(p);
+                ModMetadata meta = metadataReader.readMetadata(p);
                 metadataMap.put(meta, p);
                 LOGGER.info("Found mod {} v{}", meta.id(), meta.version());
             } catch (Exception e) {
@@ -90,7 +156,7 @@ public class ModLoader {
         for (ModMetadata data : mods.keySet()) {
             Path modPath = mods.get(data);
             try {
-                ClassLoader cl = ModLoading.classLoaderFactory().createClassLoader(modPath);
+                ClassLoader cl = classLoaderFactory.createClassLoader(modPath);
                 CatanMod instance = instantiateMod(data.entrypoint(), cl);
                 loaded.add(new LoadedMod(modPath, data, instance, cl));
                 LOGGER.info("Loaded mod {} v{}", data.id(), data.version());

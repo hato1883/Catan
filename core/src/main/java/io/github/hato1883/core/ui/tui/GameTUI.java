@@ -22,7 +22,7 @@ public class GameTUI implements IUI {
     public static final String GAME_NAME = "Catan";
     public static final String LOGGER_ID = "";
     private static final Logger LOGGER = LogManager.getLogger(LOGGER_ID);
-    private final ModLoader loader = new ModLoader();
+    private final ModLoader loader = ModLoader.createDefault();
 
     private TUIScreen currentScreen;
 

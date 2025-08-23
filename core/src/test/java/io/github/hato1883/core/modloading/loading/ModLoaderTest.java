@@ -1,7 +1,5 @@
 package io.github.hato1883.core.modloading.loading;
 
-import io.github.hato1883.api.LogManager;
-import io.github.hato1883.api.ModLoading;
 import io.github.hato1883.api.mod.CatanMod;
 import io.github.hato1883.api.mod.load.*;
 import io.github.hato1883.api.mod.load.asset.IModAssetLoader;
@@ -65,13 +63,6 @@ class ModLoaderTest {
         locator.register(IRegistryLoader.class, registryLoader);
         locator.register(IModAssetLoader.class, modAssetLoader);
         locator.register(IModInitializer.class, initializer);
-
-        ModLoading.builder().withServiceLocator(locator).build();
-    }
-
-    @AfterEach
-    void tearDown() {
-        ModLoading.reset();
     }
 
     /**
@@ -94,10 +85,16 @@ class ModLoaderTest {
         dependencyResolver.loadOrder = Map.of(meta, path);
         classLoaderFactory.modInstance = new TestCatanMod();
 
-        // Assert that ModLoading.discovery() returns our test double
-        assertSame(discovery, ModLoading.discovery(), "ModLoading.discovery() is not the test double!");
-
-        ModLoader loader = new ModLoader();
+        ModLoader loader = new ModLoader(
+            discovery,
+            dependencyResolver,
+            metadataReader,
+            classLoaderFactory,
+            listenerScanner,
+            registryLoader,
+            modAssetLoader,
+            initializer
+        );
         List<ILoadedMod> loaded = loader.loadAll(fakeModsDir);
         assertEquals(1, loaded.size());
         assertEquals(meta, loaded.getFirst().metadata());
@@ -120,7 +117,16 @@ class ModLoaderTest {
         );
         dependencyResolver.shouldThrow = true;
 
-        ModLoader loader = new ModLoader();
+        ModLoader loader = new ModLoader(
+            discovery,
+            dependencyResolver,
+            metadataReader,
+            classLoaderFactory,
+            listenerScanner,
+            registryLoader,
+            modAssetLoader,
+            initializer
+        );
         ModLoadingException ex = assertThrows(ModLoadingException.class, () -> loader.loadAll(fakeModsDir));
         assertTrue(ex.getMessage().contains("dependency issues"));
     }
@@ -138,65 +144,71 @@ class ModLoaderTest {
         discovery.mods = List.of(Path.of("/fake/mods/mod1"));
         metadataReader.shouldThrow = true;
 
-        ModLoader loader = new ModLoader();
+        ModLoader loader = new ModLoader(
+            discovery,
+            dependencyResolver,
+            metadataReader,
+            classLoaderFactory,
+            listenerScanner,
+            registryLoader,
+            modAssetLoader,
+            initializer
+        );
         // Should not throw, but should skip the mod (no loaded mods)
         List<ILoadedMod> loaded = assertDoesNotThrow(() -> loader.loadAll(fakeModsDir));
         assertEquals(0, loaded.size());
     }
 
     // --- Test stubs ---
-    static class TestModDiscovery implements IModDiscovery {
+    static class TestModDiscovery implements io.github.hato1883.api.mod.load.IModDiscovery {
         List<Path> mods = List.of();
         boolean called = false;
         @Override
         public List<Path> discoverMods(Path modsDir) {
             called = true;
-            // System.out.println("Discovered mods: " + discovered);
             return mods;
         }
     }
-    static class TestDependencyResolver implements IDependencyResolver {
+    static class TestDependencyResolver implements io.github.hato1883.api.mod.load.dependency.IDependencyResolver {
         Map<ModMetadata, Path> loadOrder = Map.of();
         boolean shouldThrow = false;
         boolean called = false;
         @Override
         public Map<ModMetadata, Path> resolveLoadOrder(Map<ModMetadata, Path> mods) {
             called = true;
-            // System.out.println("TestDependencyResolver.resolveLoadOrder called");
             if (shouldThrow) throw new RuntimeException("Dependency error");
             return loadOrder;
         }
     }
-    static class TestMetadataReader implements IModMetadataReader {
+    static class TestMetadataReader implements io.github.hato1883.api.mod.load.IModMetadataReader {
         ModMetadata meta;
         boolean shouldThrow = false;
         boolean called = false;
         @Override
         public ModMetadata readMetadata(Path path) {
             called = true;
-            // System.out.println("Metadata read: " + metaRead);
             if (shouldThrow) throw new RuntimeException("Metadata error");
             return meta;
         }
     }
-    static class TestClassLoaderFactory implements IModClassLoaderFactory {
+    static class TestClassLoaderFactory implements io.github.hato1883.api.mod.load.IModClassLoaderFactory {
         CatanMod modInstance;
         @Override
         public ClassLoader createClassLoader(Path path) { return getClass().getClassLoader(); }
     }
-    static class TestListenerScanner implements IModListenerScanner {
+    static class TestListenerScanner implements io.github.hato1883.api.mod.load.IModListenerScanner {
         @Override public void scanAndRegister(List<ILoadedMod> mods) {}
     }
-    static class TestRegistryLoader implements IRegistryLoader {
+    static class TestRegistryLoader implements io.github.hato1883.api.mod.load.IRegistryLoader {
         @Override public void loadRegistries(List<ILoadedMod> mods) {}
     }
-    static class TestAssetLoader implements IModAssetLoader {
+    static class TestAssetLoader implements io.github.hato1883.api.mod.load.asset.IModAssetLoader {
         @Override public void loadAssets(List<ILoadedMod> mods) {}
     }
-    static class TestInitializer implements IModInitializer {
+    static class TestInitializer implements io.github.hato1883.api.mod.load.IModInitializer {
         @Override public void initializeAll(List<ILoadedMod> mods) {}
     }
-    static class TestCatanMod implements CatanMod {
+    static class TestCatanMod implements io.github.hato1883.api.mod.CatanMod {
         @Override public void onInitialize() {}
     }
 }
