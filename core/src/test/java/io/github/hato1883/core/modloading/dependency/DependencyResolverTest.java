@@ -5,6 +5,7 @@ import io.github.hato1883.api.mod.load.LoadPriority;
 import io.github.hato1883.api.mod.load.dependency.ModDependency;
 import io.github.hato1883.api.mod.load.dependency.ModDependencyException;
 import io.github.hato1883.api.mod.load.dependency.VersionConstraint;
+import io.github.hato1883.api.mod.load.dependency.ModWithPath;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -50,10 +51,10 @@ class DependencyResolverTest {
         ModMetadata a = mod("a", "1.0.0");
         ModMetadata b = mod("b", "1.0.0");
         Map<ModMetadata, Path> mods = Map.of(a, path("a"), b, path("b"));
-        Map<ModMetadata, Path> result = new DependencyResolver().resolveLoadOrder(mods);
+        List<ModWithPath> result = new DependencyResolver().resolveLoadOrder(mods);
         assertEquals(2, result.size());
-        assertTrue(result.containsKey(a));
-        assertTrue(result.containsKey(b));
+        assertTrue(result.stream().anyMatch(mwp -> mwp.metadata().equals(a)));
+        assertTrue(result.stream().anyMatch(mwp -> mwp.metadata().equals(b)));
     }
 
     /**
@@ -65,7 +66,8 @@ class DependencyResolverTest {
         ModMetadata b = mod("b", "1.0.0");
         ModMetadata a = mod("a", "1.0.0", dep("b", ">=1.0.0", false));
         Map<ModMetadata, Path> mods = Map.of(a, path("a"), b, path("b"));
-        List<ModMetadata> order = new ArrayList<>(new DependencyResolver().resolveLoadOrder(mods).keySet());
+        List<ModWithPath> result = new DependencyResolver().resolveLoadOrder(mods);
+        List<ModMetadata> order = result.stream().map(ModWithPath::metadata).toList();
         assertTrue(order.indexOf(b) < order.indexOf(a));
     }
 
@@ -79,7 +81,8 @@ class DependencyResolverTest {
         ModMetadata b = mod("b", "1.0.0");
         ModMetadata a = mod("a", "1.0.0", dep("b", ">=1.0.0", false), dep("c", ">=1.0.0", false));
         Map<ModMetadata, Path> mods = Map.of(a, path("a"), b, path("b"), c, path("c"));
-        List<ModMetadata> order = new ArrayList<>(new DependencyResolver().resolveLoadOrder(mods).keySet());
+        List<ModWithPath> result = new DependencyResolver().resolveLoadOrder(mods);
+        List<ModMetadata> order = result.stream().map(ModWithPath::metadata).toList();
         assertTrue(order.indexOf(b) < order.indexOf(a));
         assertTrue(order.indexOf(c) < order.indexOf(a));
     }
@@ -92,9 +95,9 @@ class DependencyResolverTest {
     void testOptionalDependencyMissing() throws Exception {
         ModMetadata a = mod("a", "1.0.0", dep("b", ">=1.0.0", true));
         Map<ModMetadata, Path> mods = Map.of(a, path("a"));
-        Map<ModMetadata, Path> result = new DependencyResolver().resolveLoadOrder(mods);
+        List<ModWithPath> result = new DependencyResolver().resolveLoadOrder(mods);
         assertEquals(1, result.size());
-        assertTrue(result.containsKey(a));
+        assertTrue(result.stream().anyMatch(mwp -> mwp.metadata().equals(a)));
     }
 
     /**
@@ -143,7 +146,8 @@ class DependencyResolverTest {
         ModMetadata b = mod("b", "1.0.0", dep("d", ">=1.0.0", false));
         ModMetadata a = mod("a", "1.0.0", dep("b", ">=1.0.0", false), dep("c", ">=1.0.0", false));
         Map<ModMetadata, Path> mods = Map.of(a, path("a"), b, path("b"), c, path("c"), d, path("d"));
-        List<ModMetadata> order = new ArrayList<>(new DependencyResolver().resolveLoadOrder(mods).keySet());
+        List<ModWithPath> result = new DependencyResolver().resolveLoadOrder(mods);
+        List<ModMetadata> order = result.stream().map(ModWithPath::metadata).toList();
         assertTrue(order.indexOf(d) < order.indexOf(b));
         assertTrue(order.indexOf(d) < order.indexOf(c));
         assertTrue(order.indexOf(b) < order.indexOf(a));

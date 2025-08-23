@@ -4,13 +4,14 @@ import io.github.hato1883.api.mod.load.*;
 import io.github.hato1883.api.mod.load.dependency.IDependencyResolver;
 import io.github.hato1883.api.mod.load.dependency.ModDependency;
 import io.github.hato1883.api.mod.load.dependency.ModDependencyException;
+import io.github.hato1883.api.mod.load.dependency.ModWithPath;
 
 import java.nio.file.Path;
 import java.util.*;
 
 public class DependencyResolver implements IDependencyResolver {
 
-    public Map<ModMetadata, Path> resolveLoadOrder(Map<ModMetadata, Path> mods) throws ModDependencyException {
+    public List<ModWithPath> resolveLoadOrder(Map<ModMetadata, Path> mods) throws ModDependencyException {
         Map<String, ModMetadata> modMap = new HashMap<>(mods.size());
         for (ModMetadata mod : mods.keySet()) modMap.put(mod.id(), mod);
 
@@ -50,11 +51,10 @@ public class DependencyResolver implements IDependencyResolver {
 
         for (String id : inDegree.keySet()) if (inDegree.get(id) == 0) queue.add(modMap.get(id));
 
-        // TODO: Revaluate usage of map, maybe create a record to pack Path into ModMetadata.
-        Map<ModMetadata, Path> loadOrder = new LinkedHashMap<>(mods.size());
+        List<ModWithPath> loadOrder = new ArrayList<>(mods.size());
         while (!queue.isEmpty()) {
             ModMetadata modMetadata = queue.poll();
-            loadOrder.put(modMetadata, mods.get(modMetadata));
+            loadOrder.add(new ModWithPath(modMetadata, mods.get(modMetadata)));
             for (String childId : graph.getOrDefault(modMetadata.id(), Collections.emptySet())) {
                 inDegree.put(childId, inDegree.get(childId) - 1);
                 if (inDegree.get(childId) == 0) queue.add(modMap.get(childId));
@@ -67,4 +67,3 @@ public class DependencyResolver implements IDependencyResolver {
         return loadOrder;
     }
 }
-

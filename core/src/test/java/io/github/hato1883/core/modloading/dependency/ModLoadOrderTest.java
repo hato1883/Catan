@@ -5,6 +5,7 @@ import io.github.hato1883.api.mod.load.ModMetadata;
 import io.github.hato1883.api.mod.load.dependency.ModDependency;
 import io.github.hato1883.api.mod.load.dependency.ModDependencyException;
 import io.github.hato1883.api.mod.load.dependency.VersionConstraint;
+import io.github.hato1883.api.mod.load.dependency.ModWithPath;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,10 +57,10 @@ class ModLoadOrderTest {
             ModMetadata mod = createMod("single", "1.0", LoadPriority.NORMAL);
             Map<ModMetadata, Path> input = Map.of(mod, path("single.jar"));
 
-            Map<ModMetadata, Path> result = resolver.resolveLoadOrder(input);
+            List<ModWithPath> result = resolver.resolveLoadOrder(input);
 
             assertEquals(1, result.size());
-            assertTrue(result.containsKey(mod));
+            assertTrue(result.stream().anyMatch(mwp -> mwp.metadata().equals(mod)));
             assertEquals(List.of("single"), getLoadOrderIds(result));
         }
 
@@ -78,7 +79,7 @@ class ModLoadOrderTest {
                 high, path("high.jar")
             );
 
-            Map<ModMetadata, Path> result = resolver.resolveLoadOrder(input);
+            List<ModWithPath> result = resolver.resolveLoadOrder(input);
             List<String> loadOrder = getLoadOrderIds(result);
 
             assertEquals(2, result.size());
@@ -102,7 +103,7 @@ class ModLoadOrderTest {
                 low, path("low.jar")
             );
 
-            Map<ModMetadata, Path> result = resolver.resolveLoadOrder(input);
+            List<ModWithPath> result = resolver.resolveLoadOrder(input);
             List<String> loadOrder = getLoadOrderIds(result);
 
             assertEquals(3, result.size());
@@ -137,7 +138,7 @@ class ModLoadOrderTest {
                 normal, path("normal.jar")
             );
 
-            Map<ModMetadata, Path> result = resolver.resolveLoadOrder(input);
+            List<ModWithPath> result = resolver.resolveLoadOrder(input);
             List<String> loadOrder = getLoadOrderIds(result);
 
             assertEquals("base", loadOrder.get(0));
@@ -166,7 +167,7 @@ class ModLoadOrderTest {
                 other, path("other.jar")
             );
 
-            Map<ModMetadata, Path> result = resolver.resolveLoadOrder(input);
+            List<ModWithPath> result = resolver.resolveLoadOrder(input);
             List<String> loadOrder = getLoadOrderIds(result);
 
             // Verify dependencies are respected
@@ -202,7 +203,7 @@ class ModLoadOrderTest {
                 normal, path("normal.jar")
             );
 
-            Map<ModMetadata, Path> result = resolver.resolveLoadOrder(input);
+            List<ModWithPath> result = resolver.resolveLoadOrder(input);
             List<String> loadOrder = getLoadOrderIds(result);
 
             // These invariants must hold across all runs
@@ -301,7 +302,7 @@ class ModLoadOrderTest {
                 high, path("high.jar")
             );
 
-            Map<ModMetadata, Path> result = resolver.resolveLoadOrder(input);
+            List<ModWithPath> result = resolver.resolveLoadOrder(input);
             List<String> loadOrder = getLoadOrderIds(result);
 
             assertEquals(2, result.size());
@@ -325,7 +326,7 @@ class ModLoadOrderTest {
         void emptyModList() throws ModDependencyException {
             Map<ModMetadata, Path> input = Map.of();
 
-            Map<ModMetadata, Path> result = resolver.resolveLoadOrder(input);
+            List<ModWithPath> result = resolver.resolveLoadOrder(input);
 
             assertTrue(result.isEmpty());
         }
@@ -352,7 +353,7 @@ class ModLoadOrderTest {
                 plugin, path("plugin.jar")
             );
 
-            Map<ModMetadata, Path> result = resolver.resolveLoadOrder(input);
+            List<ModWithPath> result = resolver.resolveLoadOrder(input);
             List<String> loadOrder = getLoadOrderIds(result);
 
             // Verify all dependencies are respected
@@ -383,7 +384,7 @@ class ModLoadOrderTest {
                 modC, path("ccc.jar")
             );
 
-            Map<ModMetadata, Path> result = resolver.resolveLoadOrder(input);
+            List<ModWithPath> result = resolver.resolveLoadOrder(input);
             List<String> loadOrder = getLoadOrderIds(result);
 
             // Should be ordered alphabetically by mod ID as tiebreaker
@@ -404,15 +405,14 @@ class ModLoadOrderTest {
         return Paths.get(filename);
     }
 
-    private List<String> getLoadOrderIds(Map<ModMetadata, Path> result) {
-        return result.keySet().stream()
-            .map(ModMetadata::id)
-            .collect(Collectors.toList());
+    // Update getLoadOrderIds to accept List<ModWithPath>
+    private static List<String> getLoadOrderIds(List<ModWithPath> result) {
+        return result.stream().map(mwp -> mwp.metadata().id()).collect(Collectors.toList());
     }
 
     // Mock classes for testing (replace with your actual classes)
     public static class ModLoadOrderResolver {
-        public Map<ModMetadata, Path> resolveLoadOrder(Map<ModMetadata, Path> mods) throws ModDependencyException {
+        public List<ModWithPath> resolveLoadOrder(Map<ModMetadata, Path> mods) throws ModDependencyException {
             Map<String, ModMetadata> modMap = new HashMap<>();
             for (ModMetadata mod : mods.keySet()) modMap.put(mod.id(), mod);
 
@@ -454,10 +454,10 @@ class ModLoadOrderTest {
                 }
             }
 
-            Map<ModMetadata, Path> loadOrder = new LinkedHashMap<>();
+            List<ModWithPath> loadOrder = new ArrayList<>();
             while (!queue.isEmpty()) {
                 ModMetadata modMetadata = queue.poll();
-                loadOrder.put(modMetadata, mods.get(modMetadata));
+                loadOrder.add(new ModWithPath(modMetadata, mods.get(modMetadata)));
 
                 for (String childId : graph.getOrDefault(modMetadata.id(), Collections.emptySet())) {
                     inDegree.put(childId, inDegree.get(childId) - 1);

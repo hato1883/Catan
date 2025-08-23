@@ -4,6 +4,7 @@ import io.github.hato1883.api.ModLoading;
 import io.github.hato1883.api.mod.load.*;
 import io.github.hato1883.api.mod.load.asset.IModAssetLoader;
 import io.github.hato1883.api.mod.load.dependency.IDependencyResolver;
+import io.github.hato1883.api.mod.load.dependency.ModWithPath;
 import io.github.hato1883.api.services.IServiceLocator;
 import org.junit.jupiter.api.*;
 
@@ -101,7 +102,13 @@ class ModLoadingIntegrationTest {
     }
     static class TestDependencyResolver implements IDependencyResolver {
         @Override
-        public Map<ModMetadata, Path> resolveLoadOrder(Map<ModMetadata, Path> mods) { return mods; }
+        public List<ModWithPath> resolveLoadOrder(Map<ModMetadata, Path> mods) {
+            List<ModWithPath> result = new java.util.ArrayList<>();
+            for (Map.Entry<ModMetadata, Path> entry : mods.entrySet()) {
+                result.add(new ModWithPath(entry.getKey(), entry.getValue()));
+            }
+            return result;
+        }
     }
     static class TestMetadataReader implements IModMetadataReader {
         @Override
