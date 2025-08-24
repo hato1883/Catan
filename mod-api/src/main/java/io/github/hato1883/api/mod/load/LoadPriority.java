@@ -1,9 +1,11 @@
 package io.github.hato1883.api.mod.load;
 
 public enum LoadPriority {
+    HIGHEST(4),
     HIGH(3),
     NORMAL(2),
-    LOW(1);
+    LOW(1),
+    LOWEST(0);
 
     private final int weight;
 
