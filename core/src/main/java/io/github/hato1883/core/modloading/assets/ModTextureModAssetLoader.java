@@ -3,6 +3,8 @@ package io.github.hato1883.core.modloading.assets;
 import io.github.hato1883.api.LogManager;
 import io.github.hato1883.api.mod.load.ILoadedMod;
 import io.github.hato1883.api.mod.load.asset.*;
+import io.github.hato1883.core.modloading.assets.textures.PrecedenceResolvedTextureIndex;
+import io.github.hato1883.core.modloading.assets.textures.DefaultTextureAtlasBuilder;
 import org.slf4j.Logger;
 
 import java.io.BufferedWriter;
@@ -26,6 +28,10 @@ public class ModTextureModAssetLoader implements IModAssetLoader {
         this.discovery = discovery;
         this.atlasBuilder = atlasBuilder;
         this.cacheDir = cacheDir;
+    }
+
+    public TextureDiscoveryService getDiscovery() {
+        return this.discovery;
     }
 
     record AtlasBuildResult(ILoadedMod mod, AssetCategory category, int lod,
@@ -130,5 +136,20 @@ public class ModTextureModAssetLoader implements IModAssetLoader {
             lod
         );
     }
-}
 
+    /**
+     * Loads all textures from all sources, resolves precedence, and builds a single atlas per category/lod.
+     * This bypasses per-mod merging and uses incremental, memory-efficient packing.
+     */
+    public void loadAssetsWithPrecedence(List<List<TextureEntry>> allSources, Path atlasDirectory, String baseName) throws IOException {
+        // Build precedence-resolved index
+        PrecedenceResolvedTextureIndex index = new PrecedenceResolvedTextureIndex(allSources);
+        List<TextureEntry> resolved = new ArrayList<>(index.getResolvedEntries());
+        // Use incremental builder
+        if (atlasBuilder instanceof DefaultTextureAtlasBuilder builder) {
+            builder.buildIncrementalAtlas(resolved, atlasDirectory, baseName);
+        } else {
+            throw new UnsupportedOperationException("Atlas builder does not support incremental packing");
+        }
+    }
+}

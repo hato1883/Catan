@@ -3,11 +3,14 @@ package io.github.hato1883.core;
 import io.github.hato1883.api.ModLoading;
 import io.github.hato1883.api.mod.load.*;
 import io.github.hato1883.api.mod.load.asset.IModAssetLoader;
+import io.github.hato1883.api.mod.load.asset.TextureDiscoveryService;
+import io.github.hato1883.api.mod.load.asset.TextureEntry;
 import io.github.hato1883.api.mod.load.dependency.IDependencyResolver;
 import io.github.hato1883.api.mod.load.dependency.ModWithPath;
 import io.github.hato1883.api.services.IServiceLocator;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -127,8 +130,9 @@ class ModLoadingIntegrationTest {
         public void loadRegistries(List<ILoadedMod> mods) {}
     }
     static class TestAssetLoader implements IModAssetLoader {
-        @Override
-        public void loadAssets(List<ILoadedMod> mods) {}
+        @Override public void loadAssets(List<ILoadedMod> mods) {}
+        @Override public void loadAssetsWithPrecedence(List<List<TextureEntry>> allSources, Path atlasDirectory, String baseName) {}
+        @Override public TextureDiscoveryService getDiscovery() { return null; }
     }
     static class TestInitializer implements IModInitializer {
         @Override

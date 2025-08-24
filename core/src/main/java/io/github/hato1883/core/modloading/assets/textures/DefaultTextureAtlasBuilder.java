@@ -1,6 +1,14 @@
 package io.github.hato1883.core.modloading.assets.textures;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.PixmapPacker;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
+import com.badlogic.gdx.graphics.PixmapIO;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonWriter;
+import java.io.FileOutputStream;
 import io.github.hato1883.api.mod.load.ILoadedMod;
 import io.github.hato1883.api.mod.load.asset.AssetCategory;
 import io.github.hato1883.api.mod.load.asset.AssetConfig;
@@ -105,6 +113,44 @@ public class DefaultTextureAtlasBuilder implements TextureAtlasBuilder {
                     .map(Path::toFile)
                     .forEach(java.io.File::delete);
             }
+        }
+    }
+
+    /**
+     * Incrementally builds an atlas from a precedence-resolved set of textures.
+     * Only one image and the atlas are in memory at a time.
+     */
+    public void buildIncrementalAtlas(List<TextureEntry> resolvedTextures, Path atlasDirectory, String baseName) throws IOException {
+        if (resolvedTextures.isEmpty()) return;
+        Files.createDirectories(atlasDirectory);
+
+        PixmapPacker packer = new PixmapPacker(cfg.atlasPageSize(), cfg.atlasPageSize(), Pixmap.Format.RGBA8888, cfg.padding(), false);
+        try {
+            for (TextureEntry entry : resolvedTextures) {
+                try (InputStream in = entry.openStream()) {
+                    Pixmap pixmap = new Pixmap(in.readAllBytes(), 0, in.available());
+                    packer.pack(entry.getFileName(), pixmap);
+                    pixmap.dispose();
+                }
+            }
+            // Save atlas pages as PNGs
+            int pageCount = packer.getPages().size;
+            for (int i = 0; i < pageCount; i++) {
+                Pixmap page = packer.getPages().get(i).getPixmap();
+                Path pagePath = atlasDirectory.resolve(baseName + "_page" + i + ".png");
+                FileHandle handel = Gdx.files.absolute(pagePath.toFile().getAbsoluteFile().toString());
+                PixmapIO.writePNG(handel, page);
+            }
+            // Save basic metadata as JSON
+            Path metaPath = atlasDirectory.resolve(baseName + ".atlas.json");
+            Json json = new Json();
+            json.setOutputType(JsonWriter.OutputType.json);
+            List<String> names = resolvedTextures.stream().map(TextureEntry::getFileName).toList();
+            try (FileOutputStream out = new FileOutputStream(metaPath.toFile())) {
+                out.write(json.toJson(names).getBytes());
+            }
+        } finally {
+            packer.dispose();
         }
     }
 }

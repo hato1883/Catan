@@ -119,8 +119,8 @@ tasks.register("cleanMods", Delete) {
 tasks.register("copyMods", Copy) {
   dependsOn(":mods:basemod:jar")  // always rebuild basemod
   from(project(":mods:basemod").tasks.jar)
-  dependsOn(":mods:basemod-duplicate:jar")  // always rebuild basemod
-  from(project(":mods:basemod-duplicate").tasks.jar)
+  //dependsOn(":mods:basemod-duplicate:jar")  // always rebuild basemod
+  //from(project(":mods:basemod-duplicate").tasks.jar)
   into(modsDir)
   doFirst {
     println "Copying basemod.jar to ${destinationDir}"

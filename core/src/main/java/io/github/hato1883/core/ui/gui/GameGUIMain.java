@@ -43,7 +43,7 @@ public class GameGUIMain extends Game {
         LOGGER.info("Default services have been registered");
 
         LOGGER.info("Setting up Mod Loader...");
-        loader = ModLoader.createDefault(serviceLocator);
+        loader = ModLoader.createDefault(ServiceBootstrap.getContainer().getLocator(), PathResolver.getGameDataDir().resolve("mods"), PathResolver.getGameDataDir().resolve("atlases"), "mod-assets");
         LOGGER.info("Mod Loader setup completed");
 
         // Register default events
@@ -56,7 +56,7 @@ public class GameGUIMain extends Game {
 
         LOGGER.info("Loading Catan mods...");
         try {
-            loader.loadAll(PathResolver.getGameDataDir().resolve("mods"));
+            loader.loadAll();
         } catch (IOException e) {
             LOGGER.error("Critical IO error while loading mods: {}", e.getMessage(), e);
             System.exit(1);

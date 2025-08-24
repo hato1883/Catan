@@ -32,7 +32,7 @@ public class GameTUI implements IUI {
         LOGGER.info("Register default services...");
         ServiceBootstrap.initialize();
         LOGGER.info("Default services have been registered");
-        loader = ModLoader.createDefault(ServiceBootstrap.getContainer());
+        loader = ModLoader.createDefault(ServiceBootstrap.getContainer().getLocator(), PathResolver.getGameDataDir().resolve("mods"), PathResolver.getGameDataDir().resolve("atlases"), "mod-assets");
         serviceLocator = ServiceBootstrap.getContainer();
     }
 
@@ -50,7 +50,7 @@ public class GameTUI implements IUI {
 
         LOGGER.info("Loading Catan mods...");
         try {
-            loader.loadAll(PathResolver.getGameDataDir().resolve("mods"));
+            loader.loadAll();
         } catch (IOException e) {
             LOGGER.error("Critical IO error while loading mods: {}", e.getMessage(), e);
             exit(1);
